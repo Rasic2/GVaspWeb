@@ -1,6 +1,20 @@
 <!doctype html>
 <html>
   <body>
-    <embed src="{{ svg_name }}" />
+    <h1>GVasp 态密度图绘制</h1>
+    <div>
+      <form id="lind-width" method="POST">
+        <label for="inputData">线宽</label>
+        <input type="text" id="inputData" name="lineWidth">
+        <input type="submit" value="重新绘制" />
+      </form>
+    </div>
+    <embed src="../static/image.svg" />
+    <script>
+      const button = document.querySelector("input[type=button]");
+      const embed = document.querySelector("embed");
+      button.onclick = function(){
+        embed.src = "../static/image.svg"}
+     </script>
   </body>
 </html>
