@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="stylesheet" href="../static/style.css" />
     <script src="../static/plot.js"></script>
   </head>
   <body>
@@ -8,7 +9,12 @@
     <div>
       <form id="lind-width" method="POST">
         <label for="inputData">线宽</label>
-        <input type="text" id="inputData" name="lineWidth" />
+        <input
+          type="text"
+          id="inputData"
+          name="lineWidth"
+          oninput="checkNum()"
+        />
         <input type="submit" onclick="plot()" value="重新绘制" />
       </form>
     </div>
