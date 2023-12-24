@@ -1,18 +1,22 @@
 <template>
   <h1>GVasp 态密度图绘制</h1>
 
-  <div>
-    <Cat-input placeholder="请输入线宽" type="text" v-model="uname" clearable></Cat-input>
-    <!-- <br /> -->
-    <!-- <Cat-input placeholder="禁用的输入框" disabled></Cat-input> -->
-    <!-- <br /> -->
-    <!-- <Cat-input placeholder="请输入密码" v-model="upwd" show-password></Cat-input> -->
-  </div>
+  <!-- <div> -->
+  <!-- <cat-input placeholder="请输入线宽" type="text" v-model="uname" clearable></cat-input> -->
+  <!-- <br /> -->
+  <!-- <cat-input placeholder="禁用的输入框" disabled></cat-input> -->
+  <!-- <br /> -->
+  <!-- <cat-input placeholder="请输入密码" v-model="upwd" show-password></cat-input> -->
+  <!-- </div> -->
 
   <div class="ff-hide">
-    <input type="text" v-model="val" @input="change" maxlength="10" />
+    <input type="text" v-model="val" @input="change" maxlength="10" placeholder="请输入线宽" />
     <br />
     <span v-show="flag">格式错误</span>
+  </div>
+
+  <div>
+    <slider-input ref="sliderData"></slider-input>
   </div>
 
   <img :src="svg" alt />
@@ -23,13 +27,15 @@
 
 <script>
 // import HelloWorld from './components/HelloWorld.vue'
-import CatInput from "./components/input.vue";
+// import CatInput from "./components/input.vue";
+import SliderInput from "./components/slider-dual.vue"
 
 export default {
   name: 'App',
   components: {
     // HelloWorld
-    CatInput
+    // CatInput,
+    SliderInput
   },
   data() {
     return {
@@ -42,6 +48,13 @@ export default {
       flag: false,
     }
   },
+
+  created() {
+    this.$nextTick(() => {
+      this.handleMax();
+    });
+  },
+
   methods: {
     change(e) {
       const boolNum = !isNaN(parseFloat(e.target.value)) && isFinite(e.target.value);
@@ -51,6 +64,9 @@ export default {
         this.flag = false;
       }
     },
+    handleMax() {
+      this.$refs["sliderData"].max=1000
+    }
   }
 }
 

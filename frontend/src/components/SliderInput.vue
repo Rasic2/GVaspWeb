@@ -5,7 +5,7 @@
       <span>{{ maxValue }}</span>
     </div>
   </template>
-  `
+  
   <script>
   import { defineComponent, ref } from 'vue';
   

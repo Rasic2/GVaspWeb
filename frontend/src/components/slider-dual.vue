@@ -5,7 +5,7 @@
       <div class="slider-head">
         <div class="slider-name">
           <span class="slider-text">
-            Slider
+            xlim
           </span>
         </div>
         <div class="slider-info">
