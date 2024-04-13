@@ -7,4 +7,4 @@ const app = createApp(App);
 app.config.globalProperties.$echarts = echarts;
 app.config.globalProperties.$axios = axios;
 
-app.mount('#app')
+app.mount("#app");
