@@ -1,47 +1,74 @@
 <template>
     <div class="Echarts">
-      <div id="main" style="width: 600px;height:400px;"></div>
+        <div id="main" style="width: 600px;height:400px;"></div>
     </div>
-  </template>
+</template>
   
-  <script>
-  export default {
+<script>
+import { ref } from "vue";
+const data = ref(null)
+
+export default {
     name: 'MyEcharts',
-    methods:{
-        myEcharts(){
+    methods: {
+        myEcharts() {
             // 基于准备好的dom，初始化echarts实例
             var myChart = this.$echarts.init(document.getElementById('main'));
   
             // 指定图表的配置项和数据
             var option = {
                 title: {
-                    text: 'ECharts 入门示例'
+                    text: 'Structure Optimization',
+                    left: "center",
+                    top: "top",
                 },
-                tooltip: {},
-                legend: {
-                    data:['销量']
-                },
-                xAxis: {
-                    data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
-                },
-                yAxis: {},
-                series: [{
-                    name: '销量',
-                    type: 'bar',
-                    data: [5, 20, 36, 10, 10, 20]
-                }]
+                xAxis: [{
+                    name: "Steps",
+                    nameLocation: "center",
+                    nameGap: 25,
+                }],
+                yAxis: [{
+                    name: "Energy (eV)",
+                    nameLocation: "center",
+                    nameGap: 35,
+                }],
+                series: [
+                    {
+                        data: data.value['data'],
+                        type: 'line',
+                        label: {
+                            show: false,
+                        },
+                        emphasis: {
+                            label: {
+                                show: true,
+                                formatter: '{c}',
+                                align: 'left',
+                            }
+                        }
+                    }
+                ]
             };
-  
+
             // 使用刚指定的配置项和数据显示图表。
             myChart.setOption(option);
-            }
+        },
+
     },
-    mounted() {
-        this.myEcharts();
-    }
-  }
-  </script>
+    created() {
+        this.$axios.get("/data.json").then((res) => {
+            data.value = res.data;
+            console.log(data.value);
+            console.log(this);
+            this.myEcharts();
+        }).catch(function (err) {
+            console.log("Error", err)
+        })
+    },
+    // mounted() {
+    //     this.myEcharts();
+    // }
+}
+</script>
   
-  <style>
-  
-  </style>
+<style></style>

@@ -20,7 +20,7 @@
   </div> -->
   <div><my-mol></my-mol></div>
   <div><my-echarts></my-echarts></div>
-  <div><my-axios></my-axios></div>
+  <!-- <div><my-axios></my-axios></div> -->
 
   <!-- <img :src="svg" alt /> -->
   <!-- <embed src="../../static/image.svg" /> -->
@@ -33,7 +33,7 @@
 // import CatInput from "./components/input.vue";
 // import SliderInput from "./components/slider-dual.vue"
 import MyEcharts from "./components/Echarts.vue";
-import MyAxios from "./components/Axios.vue";
+// import MyAxios from "./components/Axios.vue";
 import MyMol from "./components/3dmol.vue";
 
 export default {
@@ -43,7 +43,7 @@ export default {
     // CatInput,
     // SliderInput,
     MyEcharts,
-    MyAxios,
+    // MyAxios,
     MyMol
   },
   data() {
