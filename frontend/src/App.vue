@@ -21,6 +21,9 @@
   <div>
     <my-echarts></my-echarts>
   </div>
+  <div>
+    <my-axios></my-axios>
+  </div>
 
   <!-- <img :src="svg" alt /> -->
   <!-- <embed src="../../static/image.svg" /> -->
@@ -33,6 +36,7 @@
 // import CatInput from "./components/input.vue";
 // import SliderInput from "./components/slider-dual.vue"
 import MyEcharts from "./components/Echarts.vue";
+import MyAxios from "./components/Axios.vue"
 
 export default {
   name: 'App',
@@ -40,7 +44,8 @@ export default {
     // HelloWorld
     // CatInput,
     // SliderInput,
-    MyEcharts
+    MyEcharts,
+    MyAxios
   },
   data() {
     return {
