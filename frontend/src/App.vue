@@ -18,7 +18,7 @@
   <!-- <div>
     <slider-input ref="sliderData"></slider-input>
   </div> -->
-  <div><my-mol></my-mol></div>
+  <!-- <div><my-mol></my-mol></div> -->
   <div><my-echarts></my-echarts></div>
   <!-- <div><my-axios></my-axios></div> -->
 
@@ -34,7 +34,7 @@
 // import SliderInput from "./components/slider-dual.vue"
 import MyEcharts from "./components/Echarts.vue";
 // import MyAxios from "./components/Axios.vue";
-import MyMol from "./components/3dmol.vue";
+// import MyMol from "./components/3dmol.vue";
 
 export default {
   name: 'App',
@@ -44,7 +44,7 @@ export default {
     // SliderInput,
     MyEcharts,
     // MyAxios,
-    MyMol
+    // MyMol
   },
   data() {
     return {

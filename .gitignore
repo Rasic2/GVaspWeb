@@ -2,3 +2,5 @@
 *.svg
 dist
 node_modules
+OUTCAR_opt
+__pycache__

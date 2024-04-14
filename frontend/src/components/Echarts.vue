@@ -30,8 +30,26 @@ export default {
                 yAxis: [{
                     name: "Energy (eV)",
                     nameLocation: "center",
-                    nameGap: 35,
+                    nameGap: 45,
+                    max: function (value) {
+                        return Math.ceil(value.max);
+                    },
+                    min: function (value) {
+                        return Math.floor(value.min);
+                    },
                 }],
+                dataZoom: [{
+                    type: "inside"
+                }],
+                // toolbox: {
+                // 区域缩放
+                //     show: true,
+                //     feature: {
+                //         dataZoom: {
+                //             yAxisIndex: "none"
+                //         }
+                //     }
+                // },
                 series: [
                     {
                         data: data.value['data'],
@@ -56,7 +74,7 @@ export default {
 
     },
     created() {
-        this.$axios.get("http://127.0.0.1:5000/api/getdata",{headers:{"Access-Control-Allow-Origin": "*"}}).then((res) => {
+        this.$axios.get("http://127.0.0.1:5000/api/getdata", { headers: { "Access-Control-Allow-Origin": "*" } }).then((res) => {
             console.log(res)
             data.value = res.data;
             console.log(data.value);
