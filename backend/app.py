@@ -1,23 +1,21 @@
-import matplotlib.pyplot as plt
-from flask import Flask, render_template, request
+from flask import Flask
+from flask_cors import cross_origin
 
 app = Flask(__name__)
 
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/api/getdata', methods=['GET'])
+@cross_origin(origins="*")
 def plot():
-    x = [1, 2, 3, 4]
-    y = [3, 5, 2, 6]
+    data = {
+        "data": [
+            [20, 120],
+            [50, 200],
+            [40, 50]
+        ]
+    }
 
-    line_width = 1
-    if request.method == "POST":
-        line_width = request.form['lineWidth']
-
-    plt.plot(x, y, color="r", linewidth=line_width)
-    plt.savefig("static/image.svg")
-    plt.close()
-
-    return render_template('plot.html', svg_name="static/image.svg")
+    return data
 
 
 if __name__ == '__main__':

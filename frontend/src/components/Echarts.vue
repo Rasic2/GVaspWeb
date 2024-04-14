@@ -14,7 +14,7 @@ export default {
         myEcharts() {
             // 基于准备好的dom，初始化echarts实例
             var myChart = this.$echarts.init(document.getElementById('main'));
-  
+
             // 指定图表的配置项和数据
             var option = {
                 title: {
@@ -56,7 +56,8 @@ export default {
 
     },
     created() {
-        this.$axios.get("/data.json").then((res) => {
+        this.$axios.get("http://127.0.0.1:5000/api/getdata",{headers:{"Access-Control-Allow-Origin": "*"}}).then((res) => {
+            console.log(res)
             data.value = res.data;
             console.log(data.value);
             console.log(this);
