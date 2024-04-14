@@ -46,37 +46,37 @@ export default {
     // MyAxios,
     // MyMol
   },
-  data() {
-    return {
-      svg: require("../../static/image.svg"),
-      uname: "",
-      upwd: "",
-      // 输入框v-model数据
-      val: "",
-      // 提示语显示与否的标志位，默认隐藏
-      flag: false,
-    }
-  },
+  // data() {
+  //   return {
+  //     svg: require("../../static/image.svg"),
+  //     uname: "",
+  //     upwd: "",
+  //     // 输入框v-model数据
+  //     val: "",
+  //     // 提示语显示与否的标志位，默认隐藏
+  //     flag: false,
+  //   }
+  // },
 
-  created() {
-    this.$nextTick(() => {
-      this.handleMax();
-    });
-  },
+  // created() {
+  //   this.$nextTick(() => {
+  //     this.handleMax();
+  //   });
+  // },
 
-  methods: {
-    change(e) {
-      const boolNum = !isNaN(parseFloat(e.target.value)) && isFinite(e.target.value);
-      if (!boolNum) {
-        this.flag = true;
-      } else {
-        this.flag = false;
-      }
-    },
-    handleMax() {
-      this.$refs["sliderData"].max = 1000
-    }
-  }
+  // methods: {
+  //   change(e) {
+  //     const boolNum = !isNaN(parseFloat(e.target.value)) && isFinite(e.target.value);
+  //     if (!boolNum) {
+  //       this.flag = true;
+  //     } else {
+  //       this.flag = false;
+  //     }
+  //   },
+  //   handleMax() {
+  //     this.$refs["sliderData"].max = 1000
+  //   }
+  // }
 }
 
 </script>
