@@ -10,8 +10,10 @@ app = Flask(__name__)
 def plot():
     outcar = OUTCAR(name="OUTCAR_opt")
     energy = [[step + 1, e] for step, e in enumerate(outcar.energy)]
+    force = [[step + 1, f] for step, f in enumerate(outcar.force)]
     data = {
-        "data": energy
+        "energy": energy,
+        "force": force
     }
 
     return data
