@@ -1,40 +1,21 @@
 <template>
-  <!-- <h1>GVasp 态密度图绘制</h1> -->
-
-  <!-- <div> -->
-  <!-- <cat-input placeholder="请输入线宽" type="text" v-model="uname" clearable></cat-input> -->
-  <!-- <br /> -->
-  <!-- <cat-input placeholder="禁用的输入框" disabled></cat-input> -->
-  <!-- <br /> -->
-  <!-- <cat-input placeholder="请输入密码" v-model="upwd" show-password></cat-input> -->
-  <!-- </div> -->
-
-  <!-- <div class="ff-hide">
-    <input type="text" v-model="val" @input="change" maxlength="10" placeholder="请输入线宽" />
-    <br />
-    <span v-show="flag">格式错误</span>
-  </div> -->
-
-  <!-- <div>
-    <slider-input ref="sliderData"></slider-input>
-  </div> -->
-  <!-- <div><my-mol></my-mol></div> -->
-  <div><my-echarts></my-echarts></div>
-  <!-- <div><my-axios></my-axios></div> -->
-
-  <!-- <img :src="svg" alt /> -->
-  <!-- <embed src="../../static/image.svg" /> -->
-  <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
-  <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
+  <div id="app">
+    <!-- <router-link to="/index"> Index </router-link> | -->
+    <!-- <router-link to="/about"> 关于 </router-link> -->
+    <!-- <Index msg="GVasp 可视化" /> -->
+  </div>
+  <router-view />
 </template>
 
 <script>
 // import HelloWorld from './components/HelloWorld.vue'
 // import CatInput from "./components/input.vue";
 // import SliderInput from "./components/slider-dual.vue"
-import MyEcharts from "./components/Echarts.vue";
+// import MyEcharts from "./components/Echarts.vue";
+// import MyAside from "./components/Aside.vue";
 // import MyAxios from "./components/Axios.vue";
 // import MyMol from "./components/3dmol.vue";
+// import Index from "./components/Index.vue";
 
 export default {
   name: 'App',
@@ -42,9 +23,11 @@ export default {
     // HelloWorld
     // CatInput,
     // SliderInput,
-    MyEcharts,
+    // MyEcharts,
     // MyAxios,
-    // MyMol
+    // MyMol,
+    // MyAside
+    // Index
   },
   // data() {
   //   return {
@@ -99,4 +82,4 @@ export default {
 .ff-hide {
   color: red;
 }
-</style>
+</style> -->
