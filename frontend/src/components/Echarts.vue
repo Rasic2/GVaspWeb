@@ -1,7 +1,6 @@
 <template>
     <div class="Echarts">
-        <div id="energy_opt" style="width: 600px;height:400px;float:left;"></div>
-        <div id="force_opt" style="width: 600px;height:400px;float:right;"></div>
+        <div id="structure_opt" style="width: 600px;height:400px"></div>
     </div>
 </template>
   
@@ -12,18 +11,12 @@ const data = ref(null)
 export default {
     name: 'MyEcharts',
     mounted() {
-        this.EnergyEChart = this.$echarts.init(document.getElementById('energy_opt'));
-        this.ForceEChart = this.$echarts.init(document.getElementById('force_opt'));
-        // this.loading
+        this.OptEChart = this.$echarts.init(document.getElementById('structure_opt'));
         this.initDrawEChart();
     },
     methods: {
         initDrawEChart() {
-            this.EnergyEChart.showLoading({
-                maskColor: 'rgba(3,3,8,0.5)',
-                textColor: '#fff600'
-            });
-            this.ForceEChart.showLoading({
+            this.OptEChart.showLoading({
                 maskColor: 'rgba(3,3,8,0.5)',
                 textColor: '#fff600'
             });
@@ -33,13 +26,12 @@ export default {
                     "Access-Control-Allow-Origin": "*"
                 }
             }).then((res) => {
-                this.EnergyEChart.hideLoading();
-                this.ForceEChart.hideLoading();
+                this.OptEChart.hideLoading();
                 // console.log(res)
                 data.value = res.data;
                 // console.log(data.value);
                 // console.log(this);
-                var EnergyOption = {
+                var OptOption = {
                     title: {
                         text: 'Structure Optimization',
                         left: "center",
@@ -60,19 +52,21 @@ export default {
                         min: function (value) {
                             return Math.floor(value.min);
                         },
-                    }],
+                    }, {
+                        name: "Force",
+                        nameLocation: "center",
+                        nameGap: 45,
+                        max: function (value) {
+                            return Math.ceil(value.max);
+                        },
+                        min: function (value) {
+                            return Math.floor(value.min);
+                        },
+                    }
+                    ],
                     dataZoom: [{
                         type: "inside"
                     }],
-                    // toolbox: {
-                    // 区域缩放
-                    //     show: true,
-                    //     feature: {
-                    //         dataZoom: {
-                    //             yAxisIndex: "none"
-                    //         }
-                    //     }
-                    // },
                     series: [
                         {
                             data: data.value['energy'],
@@ -87,41 +81,13 @@ export default {
                                     align: 'left',
                                 }
                             }
-                        }
-                    ]
-                };
-                var ForceOption = {
-                    title: {
-                        text: 'Structure Optimization',
-                        left: "center",
-                        top: "top",
-                    },
-                    xAxis: [{
-                        name: "Steps",
-                        nameLocation: "center",
-                        nameGap: 25,
-                    }],
-                    yAxis: [{
-                        name: "Force",
-                        nameLocation: "center",
-                        nameGap: 45,
-                        max: function (value) {
-                            return Math.ceil(value.max);
-                        },
-                        min: function (value) {
-                            return Math.floor(value.min);
-                        },
-                    }],
-                    dataZoom: [{
-                        type: "inside"
-                    }],
-                    series: [
-                        {
+                        }, {
                             data: data.value['force'],
                             type: 'line',
                             label: {
                                 show: false,
                             },
+                            yAxisIndex: 1,
                             emphasis: {
                                 label: {
                                     show: true,
@@ -132,8 +98,7 @@ export default {
                         }
                     ]
                 };
-                this.EnergyEChart.setOption(EnergyOption);
-                this.ForceEChart.setOption(ForceOption);
+                this.OptEChart.setOption(OptOption);
             }).catch(function (err) {
                 console.log("Error", err)
             })
