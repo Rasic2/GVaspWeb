@@ -4,3 +4,4 @@ dist
 node_modules
 OUTCAR_opt
 __pycache__
+LOCPOT

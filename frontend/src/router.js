@@ -12,12 +12,12 @@ const routes = [
     //路由嵌套
     children: [
       {
-        path: "/index/menu1",
-        component: () => import("./components/OptPlot.vue"),
+        path: "/index/plot_opt",
+        component: () => import("./components/PlotOpt.vue"),
       },
       {
-        path: "/index/menu2",
-        component: () => import("./components/Main2.vue"),
+        path: "/index/plot_ep",
+        component: () => import("./components/PlotEP.vue"),
       },
       {
         path: "/index/menu3",
