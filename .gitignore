@@ -2,6 +2,7 @@
 *.svg
 dist
 node_modules
-OUTCAR_opt
+OUTCAR
 __pycache__
 LOCPOT
+EIGENVAL

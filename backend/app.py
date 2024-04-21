@@ -8,7 +8,7 @@ app = Flask(__name__)
 @app.route('/api/getdata', methods=['GET'])
 @cross_origin(origins="*")
 def plot_opt():
-    outcar = OUTCAR(name="OUTCAR_opt")
+    outcar = OUTCAR(name="OUTCAR")
     energy = [[step + 1, e] for step, e in enumerate(outcar.energy)]
     force = [[step + 1, f] for step, f in enumerate(outcar.force)]
     data = {
