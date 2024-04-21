@@ -13,7 +13,7 @@ const routes = [
     children: [
       {
         path: "/index/menu1",
-        component: () => import("./components/Main1.vue"),
+        component: () => import("./components/OptPlot.vue"),
       },
       {
         path: "/index/menu2",
