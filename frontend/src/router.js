@@ -23,6 +23,10 @@ const routes = [
         path: "/index/menu3",
         component: () => import("./components/Main3.vue"),
       },
+      {
+        path: "/index/menu4",
+        component: () => import("./components/Main4.vue"),
+      },
     ],
   },
 ];
