@@ -20,7 +20,7 @@ const routes = [
         component: () => import("./components/PlotEP.vue"),
       },
       {
-        path: "/index/menu3",
+        path: "/index/structure",
         component: () => import("./components/Main3.vue"),
       },
       {
