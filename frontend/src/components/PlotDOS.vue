@@ -21,21 +21,14 @@
           </el-radio-group>
         </div>
       </div>
-      <div class="checkboxPDOS">
-        <el-checkbox class="selectAll" v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">
-          s
-        </el-checkbox>
-        <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
-          <el-checkbox v-for="orbital in orbitals" :key="orbital" :label="orbital" :value="orbital">{{ orbital }}
-          </el-checkbox>
-        </el-checkbox-group>
+      <div v-if="radio1==2" class="inputPDOS">
+        <checkbox-pdos :l-orbital="'s'" :orbitals="[]"></checkbox-pdos>
+        <checkbox-pdos :l-orbital="'p'" :orbitals="['px','py','pz']"></checkbox-pdos>
+        <checkbox-pdos :l-orbital="'d'" :orbitals="['d1','d2','d3','d4','d5']"></checkbox-pdos>
+        <checkbox-pdos :l-orbital="'f'" :orbitals="['f1','f2','f3','f4','f5','f6','f7']"></checkbox-pdos>
       </div>
     </div>
-    <el-row>
-      <el-col :span="6">
-        <el-button @click="addAtom" class="expand_btn">+ 添加原子</el-button>
-      </el-col>
-    </el-row>
+    <el-button @click="addAtom" class="expand_btn">+ 添加原子</el-button>
     <el-row>
       <el-col :span="6">
         <el-checkbox v-model="checked1" label="Total DOS"/>
@@ -69,49 +62,17 @@ export default {
 
 <script setup>
 import {ref} from "vue";
+import CheckboxPdos from "@/components/CheckboxPdos.vue";
 // import $ from "jquery";
 
 const radio1 = ref('1')
 const atoms = ref(0);
-
-const checkAll = ref(false)
-const isIndeterminate = ref(true)
-const checkedCities = ref(['Shanghai', 'Beijing'])
-const orbitals = []
-
-const handleCheckAllChange = (val) => {
-  checkedCities.value = val ? orbitals : []
-  isIndeterminate.value = false
-}
-const handleCheckedCitiesChange = (value) => {
-  const checkedCount = value.length
-  checkAll.value = checkedCount === orbitals.length
-  isIndeterminate.value = checkedCount > 0 && checkedCount < orbitals.length
-}
 
 const addAtom = () => {
   atoms.value++;
 }
 
 // export default {
-//   name: 'PlotDOS',
-//   data() {
-//     return {atoms, radio1, checkAll, isIndeterminate, checkedCities, cities};
-//   },
-//   methods: {
-//     addAtom() {
-//       this.atoms++;
-//     },
-//     handleCheckAllChange(val) {
-//       checkedCities.value = val ? cities : []
-//       isIndeterminate.value = false
-//     },
-//     handleCheckedCitiesChange(value) {
-//       const checkedCount = value.length
-//       checkAll.value = checkedCount === cities.length
-//       isIndeterminate.value = checkedCount > 0 && checkedCount < cities.length
-//     }
-//   }
 //   methods: {
 //   },
 //   setup(){
@@ -182,7 +143,7 @@ const addAtom = () => {
 
 <style scoped>
 .atomSelect {
-  width: 500px;
+  width: 600px;
   padding-bottom: 20px;
   padding-top: 1px;
   -webkit-box-shadow: #666 0px 0px 10px;
@@ -192,7 +153,10 @@ const addAtom = () => {
 }
 
 .expand_btn {
-  min_width: 50px;
+  width: 80px;
+  display: flex;
+  margin-top: 5px;
+  margin-left: 25px;
 }
 
 #info {
@@ -223,6 +187,7 @@ const addAtom = () => {
 
 .singleAtomInput {
   display: flex;
+  margin-bottom: 5px;
 }
 
 .iconLayout {
@@ -244,13 +209,5 @@ const addAtom = () => {
   vertical-align: middle;
   flex-wrap: nowrap;
   padding: 0 20px;
-}
-
-.checkboxPDOS {
-  display: flex;
-}
-
-.selectAll {
-  padding: 0 5px;
 }
 </style>
