@@ -28,8 +28,8 @@ const routes = [
         component: () => import("./components/Main4.vue"),
       },
       {
-        path: "/index/menu5",
-        component: () => import("./components/Main5.vue"),
+        path: "/index/plot_dos",
+        component: () => import("./components/PlotDOS.vue"),
       },
     ],
   },
