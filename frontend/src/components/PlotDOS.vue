@@ -1,7 +1,7 @@
 <template>
   <div class="atomSelect">
     <h1>原子/轨道选择</h1>
-    <div class="singleAtom" v-for="(atom, index) in atoms" :key='index'>
+    <div class="singleAtom" v-for="(item, index) in items" :key='index'>
       <div class="inputLDOS">
         <div class="iconLayout">
           <el-icon>
@@ -15,20 +15,20 @@
               <Management/>
             </el-icon>
           </div>
-          <el-radio-group v-model="radio1" class="inputRadio">
+          <el-radio-group v-model="item.radio" class="inputRadio">
             <el-radio value="1" size="large">LDOS</el-radio>
             <el-radio value="2" size="large">PDOS</el-radio>
           </el-radio-group>
         </div>
       </div>
-      <div v-if="radio1==2" class="inputPDOS">
+      <div v-if="item.radio==2" class="inputPDOS">
         <checkbox-pdos :l-orbital="'s'" :orbitals="[]"></checkbox-pdos>
         <checkbox-pdos :l-orbital="'p'" :orbitals="['px','py','pz']"></checkbox-pdos>
         <checkbox-pdos :l-orbital="'d'" :orbitals="['d1','d2','d3','d4','d5']"></checkbox-pdos>
         <checkbox-pdos :l-orbital="'f'" :orbitals="['f1','f2','f3','f4','f5','f6','f7']"></checkbox-pdos>
       </div>
     </div>
-    <el-button @click="addAtom" class="expand_btn">+ 添加原子</el-button>
+    <el-button @click="addItem" class="expand_btn">+ 添加原子</el-button>
     <el-row>
       <el-col :span="6">
         <el-checkbox v-model="checked1" label="Total DOS"/>
@@ -65,11 +65,11 @@ import {ref} from "vue";
 import CheckboxPdos from "@/components/CheckboxPdos.vue";
 // import $ from "jquery";
 
-const radio1 = ref('1')
-const atoms = ref(0);
+const items = ref([]);
 
-const addAtom = () => {
-  atoms.value++;
+const addItem = () => {
+  items.value.push({'index': 0, 'radio': '1'});
+  // console.log(atoms.value)
 }
 
 // export default {

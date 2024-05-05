@@ -34,13 +34,13 @@ const orbitals = toRefs(props.orbitals)
 const handleCheckAllChange = (val) => {
   checkedOrbitals.value = val ? orbitals : []
   isIndeterminate.value = false
-  console.log(checkedOrbitals.value, isIndeterminate.value)
+  // console.log(checkedOrbitals.value, isIndeterminate.value)
 }
 const handleCheckedOrbitalsChange = (value) => {
   const checkedCount = value.length
   checkAll.value = checkedCount === orbitals.length
   isIndeterminate.value = checkedCount > 0 && checkedCount < orbitals.length
-  console.log(checkAll, isIndeterminate)
+  // console.log(checkAll, isIndeterminate)
 }
 </script>
 
