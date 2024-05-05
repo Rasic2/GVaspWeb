@@ -27,6 +27,10 @@ const routes = [
         path: "/index/menu4",
         component: () => import("./components/Main4.vue"),
       },
+      {
+        path: "/index/menu5",
+        component: () => import("./components/Main5.vue"),
+      },
     ],
   },
 ];

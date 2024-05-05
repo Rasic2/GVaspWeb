@@ -10,10 +10,6 @@
     <ul>
       <li v-for="(item, index) in items" :key='index'>{{item}}</li>
     </ul>
-    <div class="add_cap">
-        <button @click="addRule">添加规则</button>
-        <button @click="remRule">删除规则</button>
-    </div>
   </div>
 </template>
 
@@ -25,12 +21,6 @@ import $ from "jquery";
 export default {
   name: 'XyzDisplay3D',
   methods: {
-    addRule() {
-      this.num++;
-    },
-    remRule() {
-      this.num--;
-    }
   },
   setup(){
     let placeHolder1=`请输入xyz格式的信息,第一行为总原子数,第二行为标题,第三行以及以后是原子三维坐标`
