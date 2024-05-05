@@ -1,26 +1,34 @@
 <template>
   <div class="atomSelect">
     <h1>原子/轨道选择</h1>
-    <div>
-      <div v-for="(atom, index) in atoms" :key='index'>
-        <el-icon vertical-align="middle">
-          <RemoveFilled/>
-        </el-icon>
-        <el-row flex justify="center" align="middle">
-          <el-col :span="12" aline="middle">
-
-            <el-input v-model="input" style="width: 180px" placeholder="Please input"/>
+    <div class="singleAtom" v-for="(atom, index) in atoms" :key='index'>
+      <div class="inputLDOS">
+        <div class="iconLayout">
+          <el-icon>
+            <RemoveFilled/>
+          </el-icon>
+        </div>
+        <div class="singleAtomInput">
+          <el-input class="input" v-model="input" placeholder="Please input"/>
+          <div class="iconLayout">
             <el-icon>
               <Management/>
             </el-icon>
-          </el-col>
-          <div flex items-center text-sm>
-            <el-radio-group v-model="radio1" class="ml-4">
-              <el-radio value="1" size="large">Option 1</el-radio>
-              <el-radio value="2" size="large">Option 2</el-radio>
-            </el-radio-group>
           </div>
-        </el-row>
+          <el-radio-group v-model="radio1" class="inputRadio">
+            <el-radio value="1" size="large">LDOS</el-radio>
+            <el-radio value="2" size="large">PDOS</el-radio>
+          </el-radio-group>
+        </div>
+      </div>
+      <div class="checkboxPDOS">
+        <el-checkbox class="selectAll" v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">
+          s
+        </el-checkbox>
+        <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
+          <el-checkbox v-for="orbital in orbitals" :key="orbital" :label="orbital" :value="orbital">{{ orbital }}
+          </el-checkbox>
+        </el-checkbox-group>
       </div>
     </div>
     <el-row>
@@ -54,23 +62,56 @@
 </template>
 
 <script>
+export default {
+  name: 'PlotDOS'
+}
+</script>
 
+<script setup>
 import {ref} from "vue";
 // import $ from "jquery";
 
 const radio1 = ref('1')
 const atoms = ref(0);
 
-export default {
-  name: 'PlotDOS',
-  data() {
-    return {atoms, radio1};
-  },
-  methods: {
-    addAtom() {
-      this.atoms++;
-    }
-  }
+const checkAll = ref(false)
+const isIndeterminate = ref(true)
+const checkedCities = ref(['Shanghai', 'Beijing'])
+const orbitals = []
+
+const handleCheckAllChange = (val) => {
+  checkedCities.value = val ? orbitals : []
+  isIndeterminate.value = false
+}
+const handleCheckedCitiesChange = (value) => {
+  const checkedCount = value.length
+  checkAll.value = checkedCount === orbitals.length
+  isIndeterminate.value = checkedCount > 0 && checkedCount < orbitals.length
+}
+
+const addAtom = () => {
+  atoms.value++;
+}
+
+// export default {
+//   name: 'PlotDOS',
+//   data() {
+//     return {atoms, radio1, checkAll, isIndeterminate, checkedCities, cities};
+//   },
+//   methods: {
+//     addAtom() {
+//       this.atoms++;
+//     },
+//     handleCheckAllChange(val) {
+//       checkedCities.value = val ? cities : []
+//       isIndeterminate.value = false
+//     },
+//     handleCheckedCitiesChange(value) {
+//       const checkedCount = value.length
+//       checkAll.value = checkedCount === cities.length
+//       isIndeterminate.value = checkedCount > 0 && checkedCount < cities.length
+//     }
+//   }
 //   methods: {
 //   },
 //   setup(){
@@ -136,7 +177,7 @@ export default {
 //     onMounted(display)
 //     return {xyzContent,placeHolder1,display,items}
 //   },
-}
+// }
 </script>
 
 <style scoped>
@@ -174,5 +215,42 @@ export default {
   margin-left: 25px;
   margin-top: 50px;
   display: flex;
+}
+
+.inputLDOS {
+  display: flex;
+}
+
+.singleAtomInput {
+  display: flex;
+}
+
+.iconLayout {
+  display: flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 5px;
+}
+
+.input {
+  height: 30px;
+  width: 200px;
+}
+
+.inputRadio {
+  height: 30px;
+  align-items: center;
+  display: flex;
+  vertical-align: middle;
+  flex-wrap: nowrap;
+  padding: 0 20px;
+}
+
+.checkboxPDOS {
+  display: flex;
+}
+
+.selectAll {
+  padding: 0 5px;
 }
 </style>
