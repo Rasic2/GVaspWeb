@@ -11,7 +11,7 @@
         <div class="singleAtomInput">
           <el-input class="input" v-model="input" placeholder="Please input"/>
           <div class="iconLayout">
-            <el-icon @click="showStructure">
+            <el-icon @click="showStructure(index)">
               <Management/>
             </el-icon>
           </div>
@@ -40,7 +40,7 @@
       </el-col>
     </el-row>
   </div>
-  <xyz-display class="structureDisplay"></xyz-display>
+  <xyz-display v-model="structureIndex" class="structureDisplay"></xyz-display>
   <!-- <div class="containerDisplay">
     <div id="inputXYZ">
       <el-input type="textarea" rows="20" v-model="xyzContent" :placeholder="placeHolder1"/>
@@ -68,23 +68,33 @@ import XyzDisplay from "@/components/StructureDisplay.vue"
 import $ from "jquery";
 
 const items = ref([]);
+let structureIndex = ref()
 
 const addItem = () => {
-  items.value.push({'radio': '1'});
+  items.value.push({'radio': '1', 'display': 'none'});
   // console.log(atoms.value)
 }
 const removeItem = (index) => {
   items.value.splice(index, 1)
 }
-const showStructure = () => {
+const showStructure = (index) => {
   const structureDisplay = $('.structureDisplay');
-  console.log(structureDisplay.css("display"));
-  if (structureDisplay.css("display") === "none") {
+  if (structureIndex !== index) {
     structureDisplay.show()
     structureDisplay.css("display", "flex")
+    items.value[index]['display'] = 'flex'
+    structureIndex = index
   } else {
-    structureDisplay.css("display", "none")
+    if (items.value[index]['display'] === "none") {
+      structureDisplay.show()
+      structureDisplay.css("display", "flex")
+      items.value[index]['display'] = 'flex'
+    } else {
+      structureDisplay.css("display", "none")
+      items.value[index]['display'] = 'none'
+    }
   }
+  console.log(items.value)
 }
 
 // export default {
