@@ -4,7 +4,7 @@
     <div class="singleAtom" v-for="(item, index) in items" :key='index'>
       <div class="inputLDOS">
         <div class="iconLayout">
-          <el-icon>
+          <el-icon @click="removeItem(index)">
             <RemoveFilled/>
           </el-icon>
         </div>
@@ -68,7 +68,12 @@ import CheckboxPdos from "@/components/CheckboxPdos.vue";
 const items = ref([]);
 
 const addItem = () => {
-  items.value.push({'index': 0, 'radio': '1'});
+  items.value.push({'radio': '1'});
+  // console.log(atoms.value)
+}
+const removeItem = (index) => {
+  console.log(items.value.splice(index,1))
+  // items.value.push({'index': 0, 'radio': '1'});
   // console.log(atoms.value)
 }
 
