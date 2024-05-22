@@ -11,7 +11,7 @@
         <div class="singleAtomInput">
           <el-input class="input" v-model="input" placeholder="Please input"/>
           <div class="iconLayout">
-            <el-icon>
+            <el-icon @click="showStructure">
               <Management/>
             </el-icon>
           </div>
@@ -39,6 +39,7 @@
         <el-button @click="plot">绘制</el-button>
       </el-col>
     </el-row>
+    <xyz-display class="structureDisplay"></xyz-display>
   </div>
   <!-- <div class="containerDisplay">
     <div id="inputXYZ">
@@ -63,7 +64,8 @@ export default {
 <script setup>
 import {ref} from "vue";
 import CheckboxPdos from "@/components/CheckboxPdos.vue";
-// import $ from "jquery";
+import XyzDisplay from "@/components/Main4.vue"
+import $ from "jquery";
 
 const items = ref([]);
 
@@ -72,9 +74,16 @@ const addItem = () => {
   // console.log(atoms.value)
 }
 const removeItem = (index) => {
-  console.log(items.value.splice(index,1))
-  // items.value.push({'index': 0, 'radio': '1'});
-  // console.log(atoms.value)
+  items.value.splice(index, 1)
+}
+const showStructure = () => {
+  const structureDisplay = $('.structureDisplay');
+  console.log(structureDisplay.css("display"));
+  if (structureDisplay.css("display") === "none") {
+    structureDisplay.show()
+  } else {
+    structureDisplay.css("display", "none")
+  }
 }
 
 // export default {
@@ -214,5 +223,9 @@ const removeItem = (index) => {
   vertical-align: middle;
   flex-wrap: nowrap;
   padding: 0 20px;
+}
+
+.structureDisplay {
+  display: none
 }
 </style>
