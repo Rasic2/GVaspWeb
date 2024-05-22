@@ -39,8 +39,8 @@
         <el-button @click="plot">绘制</el-button>
       </el-col>
     </el-row>
-    <xyz-display class="structureDisplay"></xyz-display>
   </div>
+  <xyz-display class="structureDisplay"></xyz-display>
   <!-- <div class="containerDisplay">
     <div id="inputXYZ">
       <el-input type="textarea" rows="20" v-model="xyzContent" :placeholder="placeHolder1"/>
@@ -64,7 +64,7 @@ export default {
 <script setup>
 import {ref} from "vue";
 import CheckboxPdos from "@/components/CheckboxPdos.vue";
-import XyzDisplay from "@/components/Main4.vue"
+import XyzDisplay from "@/components/StructureDisplay.vue"
 import $ from "jquery";
 
 const items = ref([]);
@@ -81,6 +81,7 @@ const showStructure = () => {
   console.log(structureDisplay.css("display"));
   if (structureDisplay.css("display") === "none") {
     structureDisplay.show()
+    structureDisplay.css("display", "flex")
   } else {
     structureDisplay.css("display", "none")
   }
@@ -164,6 +165,7 @@ const showStructure = () => {
   -moz-box-shadow: #666 0px 0px 10px;
   box-shadow: #666 0px 0px 10px;
   background: #EEFF99;
+  float: left
 }
 
 .expand_btn {
