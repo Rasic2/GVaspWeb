@@ -9,26 +9,19 @@
   </div>
 </template>
 
-<!--<script setup>-->
-<!--import {toRefs, defineProps} from 'vue';-->
-<!--const props = defineProps({-->
-<!--  atoms: {-->
-<!--    type: Array,-->
-<!--    default: () => [],-->
-<!--  }-->
-<!--})-->
-<!--const atoms = toRefs(props.atoms)-->
-<!--</script>-->
-
-<script>
+<script setup>
 import {onMounted, ref} from "vue";
-import $ from 'jquery';
+import $ from "jquery";
 
-export default {
-  name: 'XyzDisplay',
-  setup() {
-    let placeHolder1 = `请输入xyz格式的信息,第一行为总原子数,第二行为标题,第三行以及以后是原子三维坐标`
-    let xyzContent = ref(`# generated using pymatgen
+// const props = defineProps({
+//   atoms: {
+//     type: Array,
+//     default: () => [],
+//   }
+// })
+
+let atoms = ref([]);
+let xyzContent = ref(`# generated using pymatgen
 data_CeO3
 _symmetry_space_group_name_H-M   'P 1'
 _cell_length_a   6.06488433
@@ -63,66 +56,69 @@ O  O5  1  0.32367900  0.91327400  0.25000000  1
 O  O6  1  0.41040400  0.32367900  0.75000000  1
 O  O7  1  0.58959600  0.67632100  0.25000000  1
 `);
-    let atoms = ref([]);
-    let display = () => {
-// eslint-disable-next-line no-undef
-      let element = $('#displayMol');
-      let config = {backgroundColor: 'white'};
-// eslint-disable-next-line no-undef
-      import("/Users/hui_zhou/Project/3Dmol.js/build/3Dmol-min").then(($3Dmol) => {
-        const viewer1 = $3Dmol.createViewer(element, config);
-        let m = viewer1.addModel(xyzContent.value, "cif"); // 需要去掉 Selective 行
-        viewer1.addUnitCell(m);
-        viewer1.setStyle({}, {stick: {radius: 0.1}, sphere: {radius: 0.3}});
-        viewer1.setHoverable({}, true, function (atom, viewer1) {
-              if (!atom.label) {
-                atom.label = viewer1.addLabel(atom.elem + ` (${atom.x.toFixed(2)}, ${atom.y.toFixed(2)}, ${atom.z.toFixed(2)})`, {
-                  position: atom,
-                  backgroundColor: 'mintcream',
-                  fontColor: 'black'
-                });
-              }
-            },
-            function (atom) {
-              if (atom.label) {
-                viewer1.removeLabel(atom.label);
-                delete atom.label;
-              }
-            },
-        );
-        viewer1.setClickable({}, true, function (atom, viewer1) {
-          if (!atom.label) {
-            // console.log(atom)
-            let newStyle = {stick: {radius: 0.1}, sphere: {radius: 1.3, color: "yellow"}};
-            viewer1.setStyle({_id: atom._id}, newStyle);
-            atom.label = viewer1.addLabel(atom.resn + ":" + atom.atom, {
-              position: atom,
-              backgroundColor: 'darkgreen',
-              backgroundOpacity: 0.8
-            });
-            // let selectAtomDiv = document.getElementById('selectAtom');
-            // let selectAtomP = document.createElement("div")
-            // console.log(atom.label)
-            // selectAtomP.innerHTML = atom.elem
-            // selectAtomDiv.appendChild(selectAtomP)
-            atoms.value.push(atom.elem + (atom.index + 1))
-            viewer1.render()
-          } else {
-            viewer1.removeLabel(atom.label)
-            delete atom.label
-            atoms.value.pop()
-          }
-        });
-        viewer1.render();
-        viewer1.zoomTo();
-      })
-    }
-    onMounted(display)
-    return {xyzContent, placeHolder1, display, atoms}
-  },
 
+const display = () => {
+// eslint-disable-next-line no-undef
+  let element = $('#displayMol');
+  let config = {backgroundColor: 'white'};
+// eslint-disable-next-line no-undef
+  import("/Users/hui_zhou/Project/3Dmol.js/build/3Dmol-min").then(($3Dmol) => {
+    const viewer1 = $3Dmol.createViewer(element, config);
+    let m = viewer1.addModel(xyzContent.value, "cif"); // 需要去掉 Selective 行
+    viewer1.addUnitCell(m);
+    viewer1.setStyle({}, {stick: {radius: 0.1}, sphere: {radius: 0.3}});
+    viewer1.setHoverable({}, true, function (atom, viewer1) {
+          if (!atom.label) {
+            atom.label = viewer1.addLabel(atom.elem + ` (${atom.x.toFixed(2)}, ${atom.y.toFixed(2)}, ${atom.z.toFixed(2)})`, {
+              position: atom,
+              backgroundColor: 'mintcream',
+              fontColor: 'black'
+            });
+          }
+        },
+        function (atom) {
+          if (atom.label) {
+            viewer1.removeLabel(atom.label);
+            delete atom.label;
+          }
+        },
+    );
+    viewer1.setClickable({}, true, function (atom, viewer1) {
+      if (!atom.label) {
+        // console.log(atom)
+        let newStyle = {stick: {radius: 0.1}, sphere: {radius: 1.3, color: "yellow"}};
+        viewer1.setStyle({_id: atom._id}, newStyle);
+        atom.label = viewer1.addLabel(atom.resn + ":" + atom.atom, {
+          position: atom,
+          backgroundColor: 'darkgreen',
+          backgroundOpacity: 0.8
+        });
+        // let selectAtomDiv = document.getElementById('selectAtom');
+        // let selectAtomP = document.createElement("div")
+        // console.log(atom.label)
+        // selectAtomP.innerHTML = atom.elem
+        // selectAtomDiv.appendChild(selectAtomP)
+        atoms.value.push(atom.elem + (atom.index + 1))
+        viewer1.render()
+      } else {
+        viewer1.removeLabel(atom.label)
+        delete atom.label
+        atoms.value.pop()
+      }
+    });
+    viewer1.render();
+    viewer1.zoomTo();
+  })
+}
+onMounted(display);
+</script>
+
+<script>
+export default {
+  name: "XyzDisplay",
 }
 </script>
+
 
 <style scoped>
 #displayMol {
