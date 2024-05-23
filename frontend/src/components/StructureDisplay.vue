@@ -9,6 +9,17 @@
   </div>
 </template>
 
+<!--<script setup>-->
+<!--import {toRefs, defineProps} from 'vue';-->
+<!--const props = defineProps({-->
+<!--  atoms: {-->
+<!--    type: Array,-->
+<!--    default: () => [],-->
+<!--  }-->
+<!--})-->
+<!--const atoms = toRefs(props.atoms)-->
+<!--</script>-->
+
 <script>
 import {onMounted, ref} from "vue";
 import $ from 'jquery';
@@ -62,7 +73,7 @@ O  O7  1  0.58959600  0.67632100  0.25000000  1
         const viewer1 = $3Dmol.createViewer(element, config);
         let m = viewer1.addModel(xyzContent.value, "cif"); // 需要去掉 Selective 行
         viewer1.addUnitCell(m);
-        viewer1.setStyle({stick: {radius: 0.1}, sphere: {radius: 0.3}});
+        viewer1.setStyle({}, {stick: {radius: 0.1}, sphere: {radius: 0.3}});
         viewer1.setHoverable({}, true, function (atom, viewer1) {
               if (!atom.label) {
                 atom.label = viewer1.addLabel(atom.elem + ` (${atom.x.toFixed(2)}, ${atom.y.toFixed(2)}, ${atom.z.toFixed(2)})`, {
@@ -81,6 +92,9 @@ O  O7  1  0.58959600  0.67632100  0.25000000  1
         );
         viewer1.setClickable({}, true, function (atom, viewer1) {
           if (!atom.label) {
+            // console.log(atom)
+            let newStyle = {stick: {radius: 0.1}, sphere: {radius: 1.3, color: "yellow"}};
+            viewer1.setStyle({_id: atom._id}, newStyle);
             atom.label = viewer1.addLabel(atom.resn + ":" + atom.atom, {
               position: atom,
               backgroundColor: 'darkgreen',
@@ -91,7 +105,8 @@ O  O7  1  0.58959600  0.67632100  0.25000000  1
             // console.log(atom.label)
             // selectAtomP.innerHTML = atom.elem
             // selectAtomDiv.appendChild(selectAtomP)
-            atoms.value.push(atom.elem)
+            atoms.value.push(atom.elem + (atom.index + 1))
+            viewer1.render()
           } else {
             viewer1.removeLabel(atom.label)
             delete atom.label

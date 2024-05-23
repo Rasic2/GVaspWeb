@@ -9,7 +9,7 @@
           </el-icon>
         </div>
         <div class="singleAtomInput">
-          <el-input class="input" v-model="input" placeholder="Please input"/>
+          <el-input class="input" v-model="item.input" placeholder="Please input"/>
           <div class="iconLayout">
             <el-icon @click="showStructure(index)">
               <Management/>
@@ -68,10 +68,10 @@ import XyzDisplay from "@/components/StructureDisplay.vue"
 import $ from "jquery";
 
 const items = ref([]);
-let structureIndex = ref()
+let structureIndex = ref();
 
 const addItem = () => {
-  items.value.push({'radio': '1', 'display': 'none'});
+  items.value.push({'radio': '1', 'display': 'none', 'input': ''});
   // console.log(atoms.value)
 }
 const removeItem = (index) => {
