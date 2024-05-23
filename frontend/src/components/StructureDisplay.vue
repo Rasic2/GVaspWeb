@@ -1,6 +1,11 @@
 <template>
   <div>
     <div id="displayMol"></div>
+    <div id="selectAtom">
+      <ul>
+        <li v-for="(item, index) in atoms" :key='index'>{{ item }}</li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -47,6 +52,7 @@ O  O5  1  0.32367900  0.91327400  0.25000000  1
 O  O6  1  0.41040400  0.32367900  0.75000000  1
 O  O7  1  0.58959600  0.67632100  0.25000000  1
 `);
+    let atoms = ref([]);
     let display = () => {
 // eslint-disable-next-line no-undef
       let element = $('#displayMol');
@@ -57,12 +63,47 @@ O  O7  1  0.58959600  0.67632100  0.25000000  1
         let m = viewer1.addModel(xyzContent.value, "cif"); // 需要去掉 Selective 行
         viewer1.addUnitCell(m);
         viewer1.setStyle({stick: {radius: 0.1}, sphere: {radius: 0.3}});
+        viewer1.setHoverable({}, true, function (atom, viewer1) {
+              if (!atom.label) {
+                atom.label = viewer1.addLabel(atom.elem + ` (${atom.x.toFixed(2)}, ${atom.y.toFixed(2)}, ${atom.z.toFixed(2)})`, {
+                  position: atom,
+                  backgroundColor: 'mintcream',
+                  fontColor: 'black'
+                });
+              }
+            },
+            function (atom) {
+              if (atom.label) {
+                viewer1.removeLabel(atom.label);
+                delete atom.label;
+              }
+            },
+        );
+        viewer1.setClickable({}, true, function (atom, viewer1) {
+          if (!atom.label) {
+            atom.label = viewer1.addLabel(atom.resn + ":" + atom.atom, {
+              position: atom,
+              backgroundColor: 'darkgreen',
+              backgroundOpacity: 0.8
+            });
+            // let selectAtomDiv = document.getElementById('selectAtom');
+            // let selectAtomP = document.createElement("div")
+            // console.log(atom.label)
+            // selectAtomP.innerHTML = atom.elem
+            // selectAtomDiv.appendChild(selectAtomP)
+            atoms.value.push(atom.elem)
+          } else {
+            viewer1.removeLabel(atom.label)
+            delete atom.label
+            atoms.value.pop()
+          }
+        });
         viewer1.render();
         viewer1.zoomTo();
       })
     }
     onMounted(display)
-    return {xyzContent, placeHolder1, display}
+    return {xyzContent, placeHolder1, display, atoms}
   },
 
 }

@@ -79,11 +79,11 @@ const removeItem = (index) => {
 }
 const showStructure = (index) => {
   const structureDisplay = $('.structureDisplay');
-  if (structureIndex !== index) {
+  if (structureIndex.value !== index) {
     structureDisplay.show()
     structureDisplay.css("display", "flex")
     items.value[index]['display'] = 'flex'
-    structureIndex = index
+    structureIndex.value = index
   } else {
     if (items.value[index]['display'] === "none") {
       structureDisplay.show()
