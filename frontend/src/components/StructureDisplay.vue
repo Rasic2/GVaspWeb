@@ -85,28 +85,18 @@ const display = () => {
         },
     );
     viewer1.setClickable({}, true, function (atom, viewer1) {
-      if (!atom.label) {
+      let atomItem = atom.elem + (atom.index + 1)
+      if (!atoms.value.includes(atomItem)) {
         let newStyle = {stick: {radius: 0.2, colorscheme: 'Jmol'}, sphere: {scale: 0.35, color: "yellow"}};
         viewer1.setStyle({index: atom.index}, newStyle);
-        atom.label = viewer1.addLabel(atom.resn + ":" + atom.atom, {
-          position: atom,
-          backgroundColor: 'darkgreen',
-          backgroundOpacity: 0.8
-        });
-        // let selectAtomDiv = document.getElementById('selectAtom');
-        // let selectAtomP = document.createElement("div")
-        // console.log(atom.label)
-        // selectAtomP.innerHTML = atom.elem
-        // selectAtomDiv.appendChild(selectAtomP)
         atoms.value.push(atom.elem + (atom.index + 1))
         viewer1.render()
       } else {
-        viewer1.removeLabel(atom.label)
+        console.log(atom)
         viewer1.setStyle({index: atom.index}, defaultStyle)
-        delete atom.label
-        atoms.value.pop()
+        atoms.value = atoms.value.filter(item => item !== atomItem)
+        viewer1.render()
       }
-      console.log(atoms.value)
     });
     viewer1.render();
     viewer1.zoomTo();
