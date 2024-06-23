@@ -8,17 +8,20 @@
             <RemoveFilled/>
           </el-icon>
         </div>
-        <div class="singleAtomInput">
-          <el-input class="input" v-model="item.input" placeholder="Please input"/>
-          <div class="iconLayout">
-            <el-icon @click="showStructure(index)">
-              <Management/>
-            </el-icon>
+        <div class="singleAtomInputPlus">
+          <div class="singleAtomInput">
+            <el-input class="input" v-model="item.input" placeholder="Please input"/>
+            <div class="iconLayout">
+              <el-icon @click="showStructure(index)">
+                <Management/>
+              </el-icon>
+            </div>
+            <el-radio-group v-model="item.radio" class="inputRadio">
+              <el-radio value="1" size="large">LDOS</el-radio>
+              <el-radio value="2" size="large">PDOS</el-radio>
+            </el-radio-group>
           </div>
-          <el-radio-group v-model="item.radio" class="inputRadio">
-            <el-radio value="1" size="large">LDOS</el-radio>
-            <el-radio value="2" size="large">PDOS</el-radio>
-          </el-radio-group>
+          <xyz-display :sIndex=index v-model="item.structure" class="structureDisplay"></xyz-display>
         </div>
       </div>
       <div v-if="item.radio==2" class="inputPDOS">
@@ -40,7 +43,7 @@
       </el-col>
     </el-row>
   </div>
-  <xyz-display v-model="structureIndex" class="structureDisplay"></xyz-display>
+
   <!-- <div class="containerDisplay">
     <div id="inputXYZ">
       <el-input type="textarea" rows="20" v-model="xyzContent" :placeholder="placeHolder1"/>
@@ -68,10 +71,9 @@ import XyzDisplay from "@/components/StructureDisplay.vue"
 import $ from "jquery";
 
 const items = ref([]);
-let structureIndex = ref();
 
 const addItem = () => {
-  items.value.push({'radio': '1', 'display': 'none', 'input': ''});
+  items.value.push({'radio': '1', 'display': 'none', 'input': '', 'structure': ''});
   // console.log(atoms.value)
 }
 const removeItem = (index) => {
@@ -79,20 +81,13 @@ const removeItem = (index) => {
 }
 const showStructure = (index) => {
   const structureDisplay = $('.structureDisplay');
-  if (structureIndex.value !== index) {
-    structureDisplay.show()
-    structureDisplay.css("display", "flex")
+  if (items.value[index]['display'] === "none") {
+    $(structureDisplay[index]).show()
+    $(structureDisplay[index]).css("display", "flex")
     items.value[index]['display'] = 'flex'
-    structureIndex.value = index
   } else {
-    if (items.value[index]['display'] === "none") {
-      structureDisplay.show()
-      structureDisplay.css("display", "flex")
-      items.value[index]['display'] = 'flex'
-    } else {
-      structureDisplay.css("display", "none")
-      items.value[index]['display'] = 'none'
-    }
+    $(structureDisplay[index]).css("display", "none")
+    items.value[index]['display'] = 'none'
   }
   console.log(items.value)
 }
@@ -238,6 +233,9 @@ const showStructure = (index) => {
 }
 
 .structureDisplay {
-  display: none
+  align-items: center;
+  vertical-align: middle;
+  flex-wrap: nowrap;
+  display: none;
 }
 </style>

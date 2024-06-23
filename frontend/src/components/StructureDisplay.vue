@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="displayMol"></div>
+    <div :id="'displayMol'+sIndex" class="structureView"></div>
     <div id="selectAtom">
       <ul>
         <li v-for="(item, index) in atoms" :key='index'>{{ item }}</li>
@@ -10,15 +10,15 @@
 </template>
 
 <script setup>
-import {onMounted, ref} from "vue";
+import {defineProps, onMounted, ref} from "vue";
 import $ from "jquery";
 
-// const props = defineProps({
-//   atoms: {
-//     type: Array,
-//     default: () => [],
-//   }
-// })
+const props = defineProps({
+  sIndex: {
+    type: Number,
+    default: 0,
+  }
+})
 
 let atoms = ref([]);
 let xyzContent = ref(`# generated using pymatgen
@@ -59,7 +59,8 @@ O  O7  1  0.58959600  0.67632100  0.25000000  1
 
 const display = () => {
 // eslint-disable-next-line no-undef
-  let element = $('#displayMol');
+  let element = $('#displayMol' + props.sIndex);
+  console.log(element)
   let config = {backgroundColor: 'white'};
 // eslint-disable-next-line no-undef
   import("/Users/hui_zhou/Project/3Dmol.js/build/3Dmol-min").then(($3Dmol) => {
@@ -113,8 +114,9 @@ export default {
 
 
 <style scoped>
-#displayMol {
-  margin-left: 25px;
+.structureView {
+  margin-top: 10px;
+  margin-bottom: 10px;
   height: 430px;
   width: 500px;
   position: relative;
