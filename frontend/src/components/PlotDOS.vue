@@ -1,4 +1,13 @@
 <template>
+  <file-upload
+      :limitNum="12"
+      :type="4"
+      :projectId="explorationFormData.projectId"
+      :fileList="explorationFormData.distributionRoom"
+      @uploadSuccess="handleDistributionRoom"
+      @updateFile="updateDistributionRoom"
+  >
+  </file-upload>
   <div class="atomSelect">
     <h1>原子/轨道选择</h1>
     <div class="singleAtom" v-for="(item, index) in items" :key="index">
@@ -71,7 +80,18 @@ export default {
 import {ref, provide} from "vue";
 import CheckboxPdos from "@/components/CheckboxPdos.vue";
 import XyzDisplay from "@/components/StructureDisplay.vue";
+import FileUpload from '@/components/upload.vue'
 import $ from "jquery";
+
+const explorationFormData = ref({
+  projectId: '',
+  projectName: '',
+  scene: [],  // 现场
+  installationSite: [],  // 安装场地
+  installationSiteOverview: '',  // 安装场地概述
+  distributionRoom: [],  // 配电房
+  distributionRoomOverview: '',  // 配电房概述
+})
 
 // 父组件定义变量，共享给子组件（provide，inject）
 const defaultStyle = {
@@ -138,6 +158,16 @@ const handleViewerCreated = (index, viewer) => {
   items.value[index]["structure"] = viewer;
   console.log(items.value);
 };
+// 处理配电房上传成功信息
+const handleDistributionRoom = (file) => {
+  console.log(file)
+  explorationFormData.value.distributionRoom.push(file)
+}
+// 更新配电房文件
+const updateDistributionRoom = (files) => {
+  console.log(files)
+  explorationFormData.value.distributionRoom = files
+}
 </script>
 
 <style scoped>
