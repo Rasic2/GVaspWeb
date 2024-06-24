@@ -9,17 +9,12 @@
       </div>
     </template>
   </el-upload>
-  <!--文件预览及下载-->
-  <div class="previewDownload">
-    <el-link :underline="false" type="primary" style="margin-right:10px" v-for="item in fileList" :key="item.id"
-             @click.prevent="downloadFile(item.url, item.name)">下载
-    </el-link>
-  </div>
 </template>
+
 <script setup>
-import {debounce} from "lodash"
 import {ref, watch, defineProps, defineEmits} from 'vue'
 import {ElMessage, ElMessageBox, ElLoading} from "element-plus"
+import axios from "axios";
 // import {uploadFileApi} from '../api/upload'
 
 const props = defineProps({
@@ -56,12 +51,13 @@ watch(
 )
 
 const emits = defineEmits(["uploadSuccess", "updateFile"])
+const formData = new FormData()
 
 // 上传图片
 const onUpload = async (file, fileList) => {
-  console.log(file)
   console.log(fileList)
   let rawFile = file.raw
+  formData.append('folder', file.raw)
   if (
       rawFile.type == "image/jpeg" && rawFile.size / 1024 / 1024 > 10 ||
       rawFile.type == "image/png" && rawFile.size / 1024 / 1024 > 10 ||
@@ -81,20 +77,23 @@ const onUpload = async (file, fileList) => {
       background: "rgba(0,0,0,.2)",
     })
 
-    // try {
-    //   const res = await uploadFileApi(rawFile, props.projectId, props.type)
-    //   console.log(res)
-    //   if (res.code == 200) {
-    //     loadingInstance.close()
-    //     const obj = res.result
-    //     emits("uploadSuccess", obj)
-    //   }
-    // } catch (error) {
-    //   fileList.splice(-1, 1) //移除当前超出大小的文件
-    //   loadingInstance.close()
-    //   console.log(error)
-    //   ElMessage.warning(`图片上传失败`)
-    // }
+    try {
+      const res = await axios.post("http://127.0.0.1:5000/api/upload", formData, {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        }
+      })
+      if (res.status == 200) {
+        loadingInstance.close()
+        const obj = res.result
+        emits("uploadSuccess", obj)
+      }
+    } catch (error) {
+      fileList.splice(-1, 1) //移除当前超出大小的文件
+      loadingInstance.close()
+      console.log(error)
+      ElMessage.warning(`图片上传失败`)
+    }
   }
   return true
 }
@@ -117,7 +116,7 @@ const handleExceed = (files, uploadFiles) => {
   )
 }
 
-const beforeRemove = (uploadFile, uploadFiles) => {
+const beforeRemove = (uploadFile) => {
   return ElMessageBox.confirm(
       `确定移除 ${uploadFile.name}文件 ?`
   ).then(
@@ -125,23 +124,6 @@ const beforeRemove = (uploadFile, uploadFiles) => {
       () => false
   )
 }
-
-
-// 下载防抖  近一年电费详单
-const downloadFile = debounce((url, fileName) => {
-  // console.log(url)
-  // console.log(fileName)
-  const link = document.createElement('a') // 创建一个 a 标签用来模拟点击事件
-  link.style.display = 'none'
-  link.href = url
-  // link.download = fileName
-  link.setAttribute('download', fileName)
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-  // exportFile.getImgURLs(url, fileName)
-
-}, 2000)
 </script>
 
 <script>

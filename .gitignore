@@ -6,3 +6,5 @@ OUTCAR
 __pycache__
 LOCPOT
 EIGENVAL
+*.db
+uploads

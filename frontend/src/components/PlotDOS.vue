@@ -1,15 +1,15 @@
 <template>
-  <file-upload
-      :limitNum="12"
-      :type="4"
-      :projectId="explorationFormData.projectId"
-      :fileList="explorationFormData.distributionRoom"
-      @uploadSuccess="handleDistributionRoom"
-      @updateFile="updateDistributionRoom"
-  >
-  </file-upload>
   <div class="atomSelect">
     <h1>原子/轨道选择</h1>
+    <file-upload
+        :limitNum="1"
+        :type="4"
+        :projectId="explorationFormData.projectId"
+        :fileList="explorationFormData.distributionRoom"
+        @uploadSuccess="handleDistributionRoom"
+        @updateFile="updateDistributionRoom"
+    >
+    </file-upload>
     <div class="singleAtom" v-for="(item, index) in items" :key="index">
       <div class="inputLDOS">
         <div class="iconLayout">
