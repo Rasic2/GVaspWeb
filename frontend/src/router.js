@@ -4,6 +4,7 @@ import Home from "./components/Home.vue";
 
 const routes = [
   //一级路由
+  { path: "/", redirect: "index" },
   { path: "/home", name: "Hone", component: Home },
   {
     path: "/index",
