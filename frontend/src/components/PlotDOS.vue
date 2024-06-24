@@ -1,19 +1,24 @@
 <template>
   <div class="atomSelect">
     <h1>原子/轨道选择</h1>
-    <div class="singleAtom" v-for="(item, index) in items" :key='index'>
+    <div class="singleAtom" v-for="(item, index) in items" :key="index">
       <div class="inputLDOS">
         <div class="iconLayout">
           <el-icon @click="removeItem(index)">
-            <RemoveFilled/>
+            <RemoveFilled />
           </el-icon>
         </div>
         <div class="singleAtomInputPlus">
           <div class="singleAtomInput">
-            <el-input class="input" v-model="item.input" placeholder="Please input"/>
+            <el-input
+              class="input"
+              v-model="item.input"
+              @input="inputAtom(index)"
+              placeholder="Please input atom index"
+            />
             <div class="iconLayout">
               <el-icon @click="showStructure(index)">
-                <Management/>
+                <Management />
               </el-icon>
             </div>
             <el-radio-group v-model="item.radio" class="inputRadio">
@@ -21,20 +26,35 @@
               <el-radio value="2" size="large">PDOS</el-radio>
             </el-radio-group>
           </div>
-          <xyz-display :sIndex=index v-model="item.structure" class="structureDisplay"></xyz-display>
+          <xyz-display
+            :sIndex="index"
+            :sItem="item"
+            v-model="item.structure"
+            class="structureDisplay"
+            @viewer-created="handleViewerCreated"
+          ></xyz-display>
         </div>
       </div>
-      <div v-if="item.radio==2" class="inputPDOS">
+      <div v-if="item.radio == 2" class="inputPDOS">
         <checkbox-pdos :l-orbital="'s'" :orbitals="[]"></checkbox-pdos>
-        <checkbox-pdos :l-orbital="'p'" :orbitals="['px','py','pz']"></checkbox-pdos>
-        <checkbox-pdos :l-orbital="'d'" :orbitals="['d1','d2','d3','d4','d5']"></checkbox-pdos>
-        <checkbox-pdos :l-orbital="'f'" :orbitals="['f1','f2','f3','f4','f5','f6','f7']"></checkbox-pdos>
+        <checkbox-pdos
+          :l-orbital="'p'"
+          :orbitals="['px', 'py', 'pz']"
+        ></checkbox-pdos>
+        <checkbox-pdos
+          :l-orbital="'d'"
+          :orbitals="['d1', 'd2', 'd3', 'd4', 'd5']"
+        ></checkbox-pdos>
+        <checkbox-pdos
+          :l-orbital="'f'"
+          :orbitals="['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7']"
+        ></checkbox-pdos>
       </div>
     </div>
     <el-button @click="addItem" class="expand_btn">+ 添加原子</el-button>
     <el-row>
       <el-col :span="6">
-        <el-checkbox v-model="checked1" label="Total DOS"/>
+        <el-checkbox v-model="checked1" label="Total DOS" />
       </el-col>
     </el-row>
     <el-row>
@@ -43,122 +63,69 @@
       </el-col>
     </el-row>
   </div>
-
-  <!-- <div class="containerDisplay">
-    <div id="inputXYZ">
-      <el-input type="textarea" rows="20" v-model="xyzContent" :placeholder="placeHolder1"/>
-      <button @click="display">display</button>
-    </div>
-    <div id="displayMol"></div>
-  </div>
-  <div id="selectAtom">
-    <ul>
-      <li v-for="(item, index) in items" :key='index'>{{item}}</li>
-    </ul>
-  </div> -->
 </template>
 
 <script>
 export default {
-  name: 'PlotDOS'
-}
+  name: "PlotDOS",
+};
 </script>
 
 <script setup>
-import {ref} from "vue";
+import { ref, provide } from "vue";
 import CheckboxPdos from "@/components/CheckboxPdos.vue";
-import XyzDisplay from "@/components/StructureDisplay.vue"
+import XyzDisplay from "@/components/StructureDisplay.vue";
 import $ from "jquery";
+
+const defaultStyle = {
+  stick: { radius: 0.2, colorscheme: "Jmol" },
+  sphere: { scale: 0.35, colorscheme: "Jmol" },
+};
+const newStyle = {
+  stick: { radius: 0.2, color: "yellow" },
+  sphere: { scale: 0.35, color: "yellow" },
+};
+provide("defaultStyle", defaultStyle);
+provide("newStyle", newStyle);
 
 const items = ref([]);
 
 const addItem = () => {
-  items.value.push({'radio': '1', 'display': 'none', 'input': '', 'structure': ''});
-  // console.log(atoms.value)
-}
+  items.value.push({ radio: "1", display: "none", input: "", structure: "" });
+};
 const removeItem = (index) => {
-  items.value.splice(index, 1)
-}
+  items.value.splice(index, 1);
+};
 const showStructure = (index) => {
-  const structureDisplay = $('.structureDisplay');
-  if (items.value[index]['display'] === "none") {
-    $(structureDisplay[index]).show()
-    $(structureDisplay[index]).css("display", "flex")
-    items.value[index]['display'] = 'flex'
+  const structureDisplay = $(".structureDisplay");
+  if (items.value[index]["display"] === "none") {
+    $(structureDisplay[index]).show();
+    $(structureDisplay[index]).css("display", "flex");
+    items.value[index]["display"] = "flex";
   } else {
-    $(structureDisplay[index]).css("display", "none")
-    items.value[index]['display'] = 'none'
+    $(structureDisplay[index]).css("display", "none");
+    items.value[index]["display"] = "none";
   }
-  console.log(items.value)
-}
+};
 
-// export default {
-//   methods: {
-//   },
-//   setup(){
-//     let placeHolder1=`请输入xyz格式的信息,第一行为总原子数,第二行为标题,第三行以及以后是原子三维坐标`
-//     let xyzContent = ref(` C  H 
-//  1.0000000000000000
-//     11.0000000000000000    0.0000000000000000    0.0000000000000000
-//      0.0000000000000000   12.0000000000000000    0.0000000000000000
-//      0.0000000000000000    0.0000000000000000   13.0000000000000000
-//  C   H  
-//    1   4
-// S
-// Cartesian
-//   5.1754311300009999  5.7887874483599999  7.2899531736589998 T T T
-//   5.5377911300030007  5.2763374483679994  6.4024631736649997 T T T
-//   4.0884311300030003  5.7887874483599999  7.2899531736589998 T T T
-//   5.5377311300080008  6.8136174483600005  7.2899531736589998 T T T
-//   5.5377711300009995  5.2764274483680005  8.1775131736609996 T T T
-// `);
-// let items=ref([])
-//     let display = ()=>{
-//       // eslint-disable-next-line no-undef
-//       let element = $('#displayMol');
-//       let config = {backgroundColor: 'white'};
-//       // eslint-disable-next-line no-undef
-//       import("/Users/hui_zhou/Project/3Dmol.js/build/3Dmol-min").then(($3Dmol)=>{
-//         const viewer1 = $3Dmol.createViewer(element, config);
-//         let m = viewer1.addModel(xyzContent.value, "vasp");
-//         viewer1.addUnitCell(m);
-//         viewer1.setStyle({stick:{radius: 0.1},sphere:{radius:0.3}});
-//         viewer1.setHoverable({},true,function(atom,viewer1) {
-//           if(!atom.label) {
-//             atom.label = viewer1.addLabel(atom.elem+` (${atom.x.toFixed(2)}, ${atom.y.toFixed(2)}, ${atom.z.toFixed(2)})`,{position: atom, backgroundColor: 'mintcream', fontColor:'black'});
-//           }
-//         },
-//           function(atom) {
-//             if(atom.label) {
-//               viewer1.removeLabel(atom.label);
-//               delete atom.label;
-//             }
-//           },
-//         )
-//         viewer1.setClickable({},true,function(atom,viewer1) {
-//           if(!atom.label){
-//             atom.label = viewer1.addLabel(atom.resn+":"+atom.atom,{position: atom, backgroundColor: 'darkgreen', backgroundOpacity: 0.8});
-//             // let selectAtomDiv = document.getElementById('selectAtom');
-//             // let selectAtomP = document.createElement("div")
-//             // console.log(atom.label)
-//             // selectAtomP.innerHTML = atom.elem
-//             // selectAtomDiv.appendChild(selectAtomP)
-//             items.value.push(atom.elem)
-//             console.log(items.value)
-//           }else{
-//             viewer1.removeLabel(atom.label)
-//             delete atom.label
-//             items.value.pop()
-//           }
-//       });
-//         viewer1.render();
-//         viewer1.zoomTo();
-//         })
-//     }
-//     onMounted(display)
-//     return {xyzContent,placeHolder1,display,items}
-//   },
-// }
+const inputAtom = (index) => {
+  const inputAtomIndex = parseInt(items.value[index]["input"], 10);
+  console.log(inputAtomIndex);
+  let viewer = items.value[index]["structure"];
+  viewer.setStyle({}, defaultStyle);
+  if (inputAtomIndex) {
+    viewer.setStyle({ index: inputAtomIndex }, newStyle);
+    // atoms.value.push(inputAtomIndex);
+    viewer.render();
+  }
+  // console.log(newStyle, defaultStyle);
+  // console.log(atoms.value);
+};
+const handleViewerCreated = (index, viewer) => {
+  console.log("3Dmol Viewer instance:", viewer);
+  items.value[index]["structure"] = viewer;
+  console.log(items.value);
+};
 </script>
 
 <style scoped>
@@ -169,8 +136,8 @@ const showStructure = (index) => {
   -webkit-box-shadow: #666 0px 0px 10px;
   -moz-box-shadow: #666 0px 0px 10px;
   box-shadow: #666 0px 0px 10px;
-  background: #EEFF99;
-  float: left
+  background: #eeff99;
+  float: left;
 }
 
 .expand_btn {

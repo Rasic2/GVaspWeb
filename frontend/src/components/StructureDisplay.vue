@@ -1,24 +1,29 @@
 <template>
   <div>
-    <div :id="'displayMol'+sIndex" class="structureView"></div>
+    <div :id="'displayMol' + sIndex" class="structureView"></div>
     <div id="selectAtom">
       <ul>
-        <li v-for="(item, index) in atoms" :key='index'>{{ item }}</li>
+        <li v-for="(item, index) in atoms" :key="index">{{ item }}</li>
       </ul>
     </div>
   </div>
 </template>
 
 <script setup>
-import {defineProps, onMounted, ref} from "vue";
+import { defineProps, defineEmits, onMounted, ref, inject } from "vue";
 import $ from "jquery";
 
 const props = defineProps({
   sIndex: {
     type: Number,
     default: 0,
-  }
-})
+  },
+  sItem: {
+    type: Object,
+    default: () => {},
+  },
+});
+const emit = defineEmits(["viewer-created"]);
 
 let atoms = ref([]);
 let xyzContent = ref(`# generated using pymatgen
@@ -58,60 +63,80 @@ O  O7  1  0.58959600  0.67632100  0.25000000  1
 `);
 
 const display = () => {
-// eslint-disable-next-line no-undef
-  let element = $('#displayMol' + props.sIndex);
-  console.log(element)
-  let config = {backgroundColor: 'white'};
-// eslint-disable-next-line no-undef
+  // eslint-disable-next-line no-undef
+  let element = $("#displayMol" + props.sIndex);
+  console.log(element);
+  console.log(props.sItem["input"]);
+  let config = { backgroundColor: "white" };
+  const newStyle = inject("newStyle");
+  const defaultStyle = inject("defaultStyle");
+  // eslint-disable-next-line no-undef
   import("/Users/hui_zhou/Project/3Dmol.js/build/3Dmol-min").then(($3Dmol) => {
     const viewer1 = $3Dmol.createViewer(element, config);
+    // this.$emit('data-from-child', viewer1)
     let m = viewer1.addModel(xyzContent.value, "cif"); // 需要去掉 Selective 行
     viewer1.addUnitCell(m);
-    let defaultStyle = {stick: {radius: 0.2, colorscheme: 'Jmol'}, sphere: {scale: 0.35, colorscheme: 'Jmol'}}
+    let defaultStyle = {
+      stick: { radius: 0.2, colorscheme: "Jmol" },
+      sphere: { scale: 0.35, colorscheme: "Jmol" },
+    };
+    let newStyle = {
+      stick: { radius: 0.2, colorscheme: "Jmol" },
+      sphere: { scale: 0.35, color: "yellow" },
+    };
     viewer1.setStyle({}, defaultStyle);
-    viewer1.setHoverable({}, true, function (atom, viewer1) {
-          if (!atom.label) {
-            atom.label = viewer1.addLabel(atom.elem + ` (${atom.x.toFixed(2)}, ${atom.y.toFixed(2)}, ${atom.z.toFixed(2)})`, {
+
+    viewer1.setHoverable(
+      {},
+      true,
+      function (atom, viewer1) {
+        if (!atom.label) {
+          atom.label = viewer1.addLabel(
+            atom.elem +
+              ` (${atom.x.toFixed(2)}, ${atom.y.toFixed(2)}, ${atom.z.toFixed(
+                2
+              )})`,
+            {
               position: atom,
-              backgroundColor: 'mintcream',
-              fontColor: 'black'
-            });
-          }
-        },
-        function (atom) {
-          if (atom.label) {
-            viewer1.removeLabel(atom.label);
-            delete atom.label;
-          }
-        },
+              backgroundColor: "mintcream",
+              fontColor: "black",
+            }
+          );
+        }
+      },
+      function (atom) {
+        if (atom.label) {
+          viewer1.removeLabel(atom.label);
+          delete atom.label;
+        }
+      }
     );
     viewer1.setClickable({}, true, function (atom, viewer1) {
-      let atomItem = atom.elem + (atom.index + 1)
+      let atomItem = atom.index + 1;
       if (!atoms.value.includes(atomItem)) {
-        let newStyle = {stick: {radius: 0.2, colorscheme: 'Jmol'}, sphere: {scale: 0.35, color: "yellow"}};
-        viewer1.setStyle({index: atom.index}, newStyle);
-        atoms.value.push(atom.elem + (atom.index + 1))
-        viewer1.render()
+        viewer1.setStyle({ index: atom.index }, newStyle);
+        atoms.value.push(atom.index + 1);
+        viewer1.render();
       } else {
-        console.log(atom)
-        viewer1.setStyle({index: atom.index}, defaultStyle)
-        atoms.value = atoms.value.filter(item => item !== atomItem)
-        viewer1.render()
+        console.log(atom);
+        viewer1.setStyle({ index: atom.index }, defaultStyle);
+        atoms.value = atoms.value.filter((item) => item !== atomItem);
+        viewer1.render();
       }
     });
     viewer1.render();
     viewer1.zoomTo();
-  })
-}
+    emit("viewer-created", props.sIndex, viewer1);
+  });
+};
 onMounted(display);
 </script>
 
 <script>
 export default {
   name: "XyzDisplay",
-}
+};
 </script>
-
 
 <style scoped>
 .structureView {
