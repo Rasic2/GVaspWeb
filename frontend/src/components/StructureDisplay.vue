@@ -88,12 +88,12 @@ const display = () => {
   const defaultStyle = inject("defaultStyle");
   // eslint-disable-next-line no-undef
   import("/Users/hui_zhou/Project/3Dmol.js/build/3Dmol-min").then(($3Dmol) => {
-    const viewer1 = $3Dmol.createViewer(element, config);
-    let m = viewer1.addModel(xyzContent.value, "cif"); // 需要去掉 Selective 行
-    viewer1.addUnitCell(m);
-    viewer1.setStyle({}, defaultStyle);
+    const viewer = $3Dmol.createViewer(element, config);
+    let m = viewer.addModel(xyzContent.value, "cif"); // 需要去掉 Selective 行
+    viewer.addUnitCell(m);
+    viewer.setStyle({}, defaultStyle);
 
-    viewer1.setHoverable(
+    viewer.setHoverable(
         {},
         true,
         function (atom, viewer1) {
@@ -113,12 +113,12 @@ const display = () => {
         },
         function (atom) {
           if (atom.label) {
-            viewer1.removeLabel(atom.label);
+            viewer.removeLabel(atom.label);
             delete atom.label;
           }
         }
     );
-    viewer1.setClickable({}, true, function (atom, viewer1) {
+    viewer.setClickable({}, true, function (atom, viewer1) {
       let atomItem = atom.index + 1;
       if (!atoms.value.includes(atomItem)) {
         viewer1.setStyle({index: atom.index}, newStyle);
@@ -135,10 +135,10 @@ const display = () => {
       }
     });
     // viewer1.render();
-    viewer1.zoomTo();
+    viewer.zoomTo();
 
     // 父组件获得子组件创建的 Viewer，子组件通过 emit 来定义
-    emit("viewer-created", props.sIndex, viewer1);
+    emit("viewer-created", props.sIndex, viewer);
   });
 };
 onMounted(display);

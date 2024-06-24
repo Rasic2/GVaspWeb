@@ -27,7 +27,7 @@ const props = defineProps({
 })
 
 const checkAll = ref(false)
-const isIndeterminate = ref(true)
+const isIndeterminate = ref(false)
 const checkedOrbitals = ref([])
 const orbitals = toRefs(props.orbitals)
 
