@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, onMounted, ref, inject } from "vue";
+import {defineProps, defineEmits, onMounted, ref, inject} from "vue";
 import $ from "jquery";
 
 const atoms = inject("atoms");
@@ -28,7 +28,8 @@ const props = defineProps({
   },
   sItem: {
     type: Object,
-    default: () => {},
+    default: () => {
+    },
   },
 });
 
@@ -82,7 +83,7 @@ const display = () => {
   let element = $("#displayMol" + props.sIndex);
   console.log(element);
   console.log(props.sItem["input"]);
-  let config = { backgroundColor: "white" };
+  let config = {backgroundColor: "white"};
   const newStyle = inject("newStyle");
   const defaultStyle = inject("defaultStyle");
   // eslint-disable-next-line no-undef
@@ -93,42 +94,42 @@ const display = () => {
     viewer1.setStyle({}, defaultStyle);
 
     viewer1.setHoverable(
-      {},
-      true,
-      function (atom, viewer1) {
-        if (!atom.label) {
-          atom.label = viewer1.addLabel(
-            atom.elem +
-              ` (${atom.x.toFixed(2)}, ${atom.y.toFixed(2)}, ${atom.z.toFixed(
-                2
-              )})`,
-            {
-              position: atom,
-              backgroundColor: "mintcream",
-              fontColor: "black",
-            }
-          );
+        {},
+        true,
+        function (atom, viewer1) {
+          if (!atom.label) {
+            atom.label = viewer1.addLabel(
+                atom.elem +
+                ` (${atom.x.toFixed(2)}, ${atom.y.toFixed(2)}, ${atom.z.toFixed(
+                    2
+                )})`,
+                {
+                  position: atom,
+                  backgroundColor: "mintcream",
+                  fontColor: "black",
+                }
+            );
+          }
+        },
+        function (atom) {
+          if (atom.label) {
+            viewer1.removeLabel(atom.label);
+            delete atom.label;
+          }
         }
-      },
-      function (atom) {
-        if (atom.label) {
-          viewer1.removeLabel(atom.label);
-          delete atom.label;
-        }
-      }
     );
     viewer1.setClickable({}, true, function (atom, viewer1) {
       let atomItem = atom.index + 1;
       if (!atoms.value.includes(atomItem)) {
-        viewer1.setStyle({ index: atom.index }, newStyle);
+        viewer1.setStyle({index: atom.index}, newStyle);
         addAtoms(atom.index + 1);
-        console.log("atoms after add",atoms.value)
+        console.log("atoms after add", atoms.value)
         viewer1.render();
         updateItemsInput(atoms.value.join(","), props.sIndex)
       } else {
-        viewer1.setStyle({ index: atom.index }, defaultStyle);
+        viewer1.setStyle({index: atom.index}, defaultStyle);
         removeAtoms(atomItem);
-        console.log("atoms after remove",atoms.value)
+        console.log("atoms after remove", atoms.value)
         updateItemsInput(atoms.value.join(","), props.sIndex)
         viewer1.render();
       }
@@ -153,6 +154,7 @@ export default {
 .structureView {
   margin-top: 10px;
   margin-bottom: 10px;
+  margin-left: 25px;
   height: 430px;
   width: 500px;
   position: relative;

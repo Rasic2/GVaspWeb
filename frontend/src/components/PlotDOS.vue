@@ -5,20 +5,20 @@
       <div class="inputLDOS">
         <div class="iconLayout">
           <el-icon @click="removeItem(index)">
-            <RemoveFilled />
+            <RemoveFilled/>
           </el-icon>
         </div>
         <div class="singleAtomInputPlus">
           <div class="singleAtomInput">
             <el-input
-              class="input"
-              v-model="item.input"
-              @input="inputAtom(index)"
-              placeholder="Please input atom index"
+                class="input"
+                v-model="item.input"
+                @input="inputAtom(index)"
+                placeholder="Please input atom index"
             />
             <div class="iconLayout">
               <el-icon @click="showStructure(index)">
-                <Management />
+                <Management/>
               </el-icon>
             </div>
             <el-radio-group v-model="item.radio" class="inputRadio">
@@ -26,37 +26,31 @@
               <el-radio value="2" size="large">PDOS</el-radio>
             </el-radio-group>
           </div>
-          <!-- 子组件访问父组件的值 -->
-          <xyz-display
-            :sIndex="index"
-            :sItem="item"
-            v-model="item.structure"
-            class="structureDisplay"
-            @viewer-created="handleViewerCreated"
-            ref="childRef"
-          ></xyz-display>
         </div>
       </div>
       <div v-if="item.radio == 2" class="inputPDOS">
         <checkbox-pdos :l-orbital="'s'" :orbitals="[]"></checkbox-pdos>
         <checkbox-pdos
-          :l-orbital="'p'"
-          :orbitals="['px', 'py', 'pz']"
+            :l-orbital="'p'"
+            :orbitals="['px', 'py', 'pz']"
         ></checkbox-pdos>
         <checkbox-pdos
-          :l-orbital="'d'"
-          :orbitals="['d1', 'd2', 'd3', 'd4', 'd5']"
+            :l-orbital="'d'"
+            :orbitals="['d1', 'd2', 'd3', 'd4', 'd5']"
         ></checkbox-pdos>
         <checkbox-pdos
-          :l-orbital="'f'"
-          :orbitals="['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7']"
+            :l-orbital="'f'"
+            :orbitals="['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7']"
         ></checkbox-pdos>
       </div>
+      <!-- 子组件访问父组件的值 -->
+      <xyz-display :sIndex="index" :sItem="item" v-model="item.structure" class="structureDisplay"
+                   @viewer-created="handleViewerCreated"></xyz-display>
     </div>
     <el-button @click="addItem" class="expand_btn">+ 添加原子</el-button>
     <el-row>
       <el-col :span="6">
-        <el-checkbox v-model="checked1" label="Total DOS" />
+        <el-checkbox v-model="checked1" label="Total DOS"/>
       </el-col>
     </el-row>
     <el-row>
@@ -74,19 +68,19 @@ export default {
 </script>
 
 <script setup>
-import { ref, provide } from "vue";
+import {ref, provide} from "vue";
 import CheckboxPdos from "@/components/CheckboxPdos.vue";
 import XyzDisplay from "@/components/StructureDisplay.vue";
 import $ from "jquery";
 
 // 父组件定义变量，共享给子组件（provide，inject）
 const defaultStyle = {
-  stick: { radius: 0.2, colorscheme: "Jmol" },
-  sphere: { scale: 0.35, colorscheme: "Jmol" },
+  stick: {radius: 0.2, colorscheme: "Jmol"},
+  sphere: {scale: 0.35, colorscheme: "Jmol"},
 };
 const newStyle = {
-  stick: { radius: 0.2, color: "yellow" },
-  sphere: { scale: 0.35, color: "yellow" },
+  stick: {radius: 0.2, color: "yellow"},
+  sphere: {scale: 0.35, color: "yellow"},
 };
 provide("defaultStyle", defaultStyle);
 provide("newStyle", newStyle);
@@ -102,16 +96,13 @@ provide("removeAtoms", (atomItem) => {
 
 const items = ref([]);
 provide("items", items)
-provide("updateItemsInput",(newValue, index)=>{
+provide("updateItemsInput", (newValue, index) => {
   items.value[index]['input'] = newValue
 })
 
-// 父组件通过 Ref 更新子组件的值
-const childRef = ref(null);
-
 // Methods
 const addItem = () => {
-  items.value.push({ radio: "1", display: "none", input: "", structure: "" });
+  items.value.push({radio: "1", display: "none", input: "", structure: ""});
 };
 const removeItem = (index) => {
   items.value.splice(index, 1);
@@ -134,7 +125,7 @@ const inputAtom = (index) => {
   viewer.setStyle({}, defaultStyle);
   atoms.value = [];
   if (inputAtomIndex) {
-    viewer.setStyle({ index: inputAtomIndex }, newStyle);
+    viewer.setStyle({index: inputAtomIndex}, newStyle);
     atoms.value.push(inputAtomIndex);
     viewer.render();
   } else {
@@ -154,9 +145,9 @@ const handleViewerCreated = (index, viewer) => {
   width: 600px;
   padding-bottom: 20px;
   padding-top: 1px;
-  -webkit-box-shadow: #666 0px 0px 10px;
-  -moz-box-shadow: #666 0px 0px 10px;
-  box-shadow: #666 0px 0px 10px;
+  -webkit-box-shadow: #666 0 0 10px;
+  -moz-box-shadow: #666 0 0 10px;
+  box-shadow: #666 0 0 10px;
   background: #eeff99;
   float: left;
 }
