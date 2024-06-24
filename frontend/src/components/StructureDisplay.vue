@@ -10,9 +10,17 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, onMounted, ref, inject } from "vue";
+import {
+  defineProps,
+  defineEmits,
+  defineExpose,
+  onMounted,
+  ref,
+  inject,
+} from "vue";
 import $ from "jquery";
 
+// 子组件访问父组件的值
 const props = defineProps({
   sIndex: {
     type: Number,
@@ -23,9 +31,16 @@ const props = defineProps({
     default: () => {},
   },
 });
+
+// 父组件获得子组件创建的 Viewer，子组件通过 emit 来定义
 const emit = defineEmits(["viewer-created"]);
 
+// 父组件通过 Ref 更新子组件的值（子组件的变量定义）
 let atoms = ref([]);
+defineExpose({
+  atoms,
+});
+
 let xyzContent = ref(`# generated using pymatgen
 data_CeO3
 _symmetry_space_group_name_H-M   'P 1'
@@ -73,7 +88,6 @@ const display = () => {
   // eslint-disable-next-line no-undef
   import("/Users/hui_zhou/Project/3Dmol.js/build/3Dmol-min").then(($3Dmol) => {
     const viewer1 = $3Dmol.createViewer(element, config);
-    // this.$emit('data-from-child', viewer1)
     let m = viewer1.addModel(xyzContent.value, "cif"); // 需要去掉 Selective 行
     viewer1.addUnitCell(m);
     let defaultStyle = {
@@ -126,6 +140,8 @@ const display = () => {
     });
     viewer1.render();
     viewer1.zoomTo();
+
+    // 父组件获得子组件创建的 Viewer，子组件通过 emit 来定义
     emit("viewer-created", props.sIndex, viewer1);
   });
 };

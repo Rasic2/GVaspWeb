@@ -26,12 +26,14 @@
               <el-radio value="2" size="large">PDOS</el-radio>
             </el-radio-group>
           </div>
+          <!-- 子组件访问父组件的值 -->
           <xyz-display
             :sIndex="index"
             :sItem="item"
             v-model="item.structure"
             class="structureDisplay"
             @viewer-created="handleViewerCreated"
+            ref="childRef"
           ></xyz-display>
         </div>
       </div>
@@ -77,6 +79,7 @@ import CheckboxPdos from "@/components/CheckboxPdos.vue";
 import XyzDisplay from "@/components/StructureDisplay.vue";
 import $ from "jquery";
 
+// 父组件定义变量，共享给子组件（provide，inject）
 const defaultStyle = {
   stick: { radius: 0.2, colorscheme: "Jmol" },
   sphere: { scale: 0.35, colorscheme: "Jmol" },
@@ -87,6 +90,9 @@ const newStyle = {
 };
 provide("defaultStyle", defaultStyle);
 provide("newStyle", newStyle);
+
+// 父组件通过 Ref 更新子组件的值
+const childRef = ref(null);
 
 const items = ref([]);
 
@@ -115,13 +121,13 @@ const inputAtom = (index) => {
   viewer.setStyle({}, defaultStyle);
   if (inputAtomIndex) {
     viewer.setStyle({ index: inputAtomIndex }, newStyle);
-    // atoms.value.push(inputAtomIndex);
+    childRef.value[index].atoms = []
+    childRef.value[index].atoms.push(inputAtomIndex);
     viewer.render();
   }
-  // console.log(newStyle, defaultStyle);
-  // console.log(atoms.value);
 };
 const handleViewerCreated = (index, viewer) => {
+  // 父组件获得子组件创建的 Viewer
   console.log("3Dmol Viewer instance:", viewer);
   items.value[index]["structure"] = viewer;
   console.log(items.value);
