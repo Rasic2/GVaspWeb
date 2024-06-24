@@ -1,24 +1,24 @@
 <template>
   <div>
     <div :id="'displayMol' + sIndex" class="structureView"></div>
-    <div id="selectAtom">
+    <!-- <div id="selectAtom">
       <ul>
         <li v-for="(item, index) in atoms" :key="index">{{ item }}</li>
       </ul>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script setup>
-import {
-  defineProps,
-  defineEmits,
-  defineExpose,
-  onMounted,
-  ref,
-  inject,
-} from "vue";
+import { defineProps, defineEmits, onMounted, ref, inject } from "vue";
 import $ from "jquery";
+
+const atoms = inject("atoms");
+const addAtoms = inject("addAtoms");
+const removeAtoms = inject("removeAtoms");
+
+// const items = inject("items")
+const updateItemsInput = inject("updateItemsInput")
 
 // 子组件访问父组件的值
 const props = defineProps({
@@ -36,10 +36,10 @@ const props = defineProps({
 const emit = defineEmits(["viewer-created"]);
 
 // 父组件通过 Ref 更新子组件的值（子组件的变量定义）
-let atoms = ref([]);
-defineExpose({
-  atoms,
-});
+// let atoms = ref([]);
+// defineExpose({
+//   atoms,
+// });
 
 let xyzContent = ref(`# generated using pymatgen
 data_CeO3
@@ -90,14 +90,6 @@ const display = () => {
     const viewer1 = $3Dmol.createViewer(element, config);
     let m = viewer1.addModel(xyzContent.value, "cif"); // 需要去掉 Selective 行
     viewer1.addUnitCell(m);
-    let defaultStyle = {
-      stick: { radius: 0.2, colorscheme: "Jmol" },
-      sphere: { scale: 0.35, colorscheme: "Jmol" },
-    };
-    let newStyle = {
-      stick: { radius: 0.2, colorscheme: "Jmol" },
-      sphere: { scale: 0.35, color: "yellow" },
-    };
     viewer1.setStyle({}, defaultStyle);
 
     viewer1.setHoverable(
@@ -129,16 +121,19 @@ const display = () => {
       let atomItem = atom.index + 1;
       if (!atoms.value.includes(atomItem)) {
         viewer1.setStyle({ index: atom.index }, newStyle);
-        atoms.value.push(atom.index + 1);
+        addAtoms(atom.index + 1);
+        console.log("atoms after add",atoms.value)
         viewer1.render();
+        updateItemsInput(atoms.value.join(","), props.sIndex)
       } else {
-        console.log(atom);
         viewer1.setStyle({ index: atom.index }, defaultStyle);
-        atoms.value = atoms.value.filter((item) => item !== atomItem);
+        removeAtoms(atomItem);
+        console.log("atoms after remove",atoms.value)
+        updateItemsInput(atoms.value.join(","), props.sIndex)
         viewer1.render();
       }
     });
-    viewer1.render();
+    // viewer1.render();
     viewer1.zoomTo();
 
     // 父组件获得子组件创建的 Viewer，子组件通过 emit 来定义

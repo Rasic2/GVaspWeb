@@ -91,11 +91,25 @@ const newStyle = {
 provide("defaultStyle", defaultStyle);
 provide("newStyle", newStyle);
 
+const atoms = ref([]);
+provide("atoms", atoms);
+provide("addAtoms", (newValue) => {
+  atoms.value.push(newValue);
+});
+provide("removeAtoms", (atomItem) => {
+  atoms.value = atoms.value.filter((item) => item !== atomItem);
+});
+
+const items = ref([]);
+provide("items", items)
+provide("updateItemsInput",(newValue, index)=>{
+  items.value[index]['input'] = newValue
+})
+
 // 父组件通过 Ref 更新子组件的值
 const childRef = ref(null);
 
-const items = ref([]);
-
+// Methods
 const addItem = () => {
   items.value.push({ radio: "1", display: "none", input: "", structure: "" });
 };
@@ -116,19 +130,20 @@ const showStructure = (index) => {
 
 const inputAtom = (index) => {
   const inputAtomIndex = parseInt(items.value[index]["input"], 10);
-  console.log(inputAtomIndex);
   let viewer = items.value[index]["structure"];
   viewer.setStyle({}, defaultStyle);
+  atoms.value = [];
   if (inputAtomIndex) {
     viewer.setStyle({ index: inputAtomIndex }, newStyle);
-    childRef.value[index].atoms = []
-    childRef.value[index].atoms.push(inputAtomIndex);
+    atoms.value.push(inputAtomIndex);
+    viewer.render();
+  } else {
     viewer.render();
   }
+  console.log(atoms.value);
 };
 const handleViewerCreated = (index, viewer) => {
   // 父组件获得子组件创建的 Viewer
-  console.log("3Dmol Viewer instance:", viewer);
   items.value[index]["structure"] = viewer;
   console.log(items.value);
 };
