@@ -42,6 +42,10 @@ const props = defineProps({
     default: () => [],
     type: Array,
   },
+  label: {
+    type: String,
+    default: "",
+  },
 });
 
 let waitFileList = ref([]);

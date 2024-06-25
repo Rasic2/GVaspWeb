@@ -11,7 +11,13 @@
       status-icon
       label-position="left"
     >
-      <el-form-item label="CONTCAR" prop="name" required>
+      <el-form-item
+        v-for="(item, index) in ['CONTCAR', 'DOSCAR']"
+        :key="index"
+        :label="item"
+        prop="name"
+        required
+      >
         <file-upload
           :limitNum="1"
           :type="4"
@@ -19,19 +25,7 @@
           :fileList="explorationFormData.fileLists"
           @uploadSuccess="handleFileLists"
           @updateFile="updateFileLists"
-        >
-        </file-upload>
-      </el-form-item>
-      <el-form-item label="DOSCAR" prop="name" required>
-        <file-upload
-          :limitNum="1"
-          :type="4"
-          :projectId="explorationFormData.projectId"
-          :fileList="explorationFormData.fileLists"
-          @uploadSuccess="handleFileLists"
-          @updateFile="updateFileLists"
-        >
-        </file-upload>
+        ></file-upload>
       </el-form-item>
     </el-form>
     <div class="singleAtom" v-for="(item, index) in items" :key="index">
