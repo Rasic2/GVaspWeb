@@ -1,33 +1,57 @@
 <template>
   <div class="atomSelect">
-    <h1>原子/轨道选择</h1>
-    <file-upload
-        :limitNum="1"
-        :type="4"
-        :projectId="explorationFormData.projectId"
-        :fileList="explorationFormData.distributionRoom"
-        @uploadSuccess="handleDistributionRoom"
-        @updateFile="updateDistributionRoom"
+    <h1>态密度绘制参数设置</h1>
+    <el-form
+      ref="ruleFormRef"
+      :model="ruleForm"
+      :rules="rules"
+      label-width="auto"
+      class="fileUpload"
+      :size="formSize"
+      status-icon
+      label-position="left"
     >
-    </file-upload>
+      <el-form-item label="CONTCAR" prop="name" required>
+        <file-upload
+          :limitNum="1"
+          :type="4"
+          :projectId="explorationFormData.projectId"
+          :fileList="explorationFormData.distributionRoom"
+          @uploadSuccess="handleDistributionRoom"
+          @updateFile="updateDistributionRoom"
+        >
+        </file-upload>
+      </el-form-item>
+      <el-form-item label="DOSCAR" prop="name" required>
+        <file-upload
+          :limitNum="1"
+          :type="4"
+          :projectId="explorationFormData.projectId"
+          :fileList="explorationFormData.distributionRoom"
+          @uploadSuccess="handleDistributionRoom"
+          @updateFile="updateDistributionRoom"
+        >
+        </file-upload>
+      </el-form-item>
+    </el-form>
     <div class="singleAtom" v-for="(item, index) in items" :key="index">
       <div class="inputLDOS">
         <div class="iconLayout">
           <el-icon @click="removeItem(index)">
-            <RemoveFilled/>
+            <RemoveFilled />
           </el-icon>
         </div>
         <div class="singleAtomInputPlus">
           <div class="singleAtomInput">
             <el-input
-                class="input"
-                v-model="item.input"
-                @input="inputAtom(index)"
-                placeholder="Please input atom index"
+              class="input"
+              v-model="item.input"
+              @input="inputAtom(index)"
+              placeholder="Please input atom index"
             />
             <div class="iconLayout">
               <el-icon @click="showStructure(index)">
-                <Management/>
+                <Management />
               </el-icon>
             </div>
             <el-radio-group v-model="item.radio" class="inputRadio">
@@ -40,26 +64,31 @@
       <div v-if="item.radio == 2" class="inputPDOS">
         <checkbox-pdos :l-orbital="'s'" :orbitals="[]"></checkbox-pdos>
         <checkbox-pdos
-            :l-orbital="'p'"
-            :orbitals="['px', 'py', 'pz']"
+          :l-orbital="'p'"
+          :orbitals="['px', 'py', 'pz']"
         ></checkbox-pdos>
         <checkbox-pdos
-            :l-orbital="'d'"
-            :orbitals="['d1', 'd2', 'd3', 'd4', 'd5']"
+          :l-orbital="'d'"
+          :orbitals="['d1', 'd2', 'd3', 'd4', 'd5']"
         ></checkbox-pdos>
         <checkbox-pdos
-            :l-orbital="'f'"
-            :orbitals="['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7']"
+          :l-orbital="'f'"
+          :orbitals="['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7']"
         ></checkbox-pdos>
       </div>
       <!-- 子组件访问父组件的值 -->
-      <xyz-display :sIndex="index" :sItem="item" v-model="item.structure" class="structureDisplay"
-                   @viewer-created="handleViewerCreated"></xyz-display>
+      <xyz-display
+        :sIndex="index"
+        :sItem="item"
+        v-model="item.structure"
+        class="structureDisplay"
+        @viewer-created="handleViewerCreated"
+      ></xyz-display>
     </div>
     <el-button @click="addItem" class="expand_btn">+ 添加原子</el-button>
     <el-row>
       <el-col :span="6">
-        <el-checkbox v-model="checked1" label="Total DOS"/>
+        <el-checkbox v-model="checked1" label="Total DOS" />
       </el-col>
     </el-row>
     <el-row>
@@ -77,30 +106,30 @@ export default {
 </script>
 
 <script setup>
-import {ref, provide} from "vue";
+import { ref, provide } from "vue";
 import CheckboxPdos from "@/components/CheckboxPdos.vue";
 import XyzDisplay from "@/components/StructureDisplay.vue";
-import FileUpload from '@/components/upload.vue'
+import FileUpload from "@/components/upload.vue";
 import $ from "jquery";
 
 const explorationFormData = ref({
-  projectId: '',
-  projectName: '',
-  scene: [],  // 现场
-  installationSite: [],  // 安装场地
-  installationSiteOverview: '',  // 安装场地概述
-  distributionRoom: [],  // 配电房
-  distributionRoomOverview: '',  // 配电房概述
-})
+  projectId: "",
+  projectName: "",
+  scene: [], // 现场
+  installationSite: [], // 安装场地
+  installationSiteOverview: "", // 安装场地概述
+  distributionRoom: [], // 配电房
+  distributionRoomOverview: "", // 配电房概述
+});
 
 // 父组件定义变量，共享给子组件（provide，inject）
 const defaultStyle = {
-  stick: {radius: 0.2, colorscheme: "Jmol"},
-  sphere: {scale: 0.35, colorscheme: "Jmol"},
+  stick: { radius: 0.2, colorscheme: "Jmol" },
+  sphere: { scale: 0.35, colorscheme: "Jmol" },
 };
 const newStyle = {
-  stick: {radius: 0.2, color: "yellow"},
-  sphere: {scale: 0.35, color: "yellow"},
+  stick: { radius: 0.2, color: "yellow" },
+  sphere: { scale: 0.35, color: "yellow" },
 };
 provide("defaultStyle", defaultStyle);
 provide("newStyle", newStyle);
@@ -115,14 +144,14 @@ provide("removeAtoms", (atomItem) => {
 });
 
 const items = ref([]);
-provide("items", items)
+provide("items", items);
 provide("updateItemsInput", (newValue, index) => {
-  items.value[index]['input'] = newValue
-})
+  items.value[index]["input"] = newValue;
+});
 
 // Methods
 const addItem = () => {
-  items.value.push({radio: "1", display: "none", input: "", structure: ""});
+  items.value.push({ radio: "1", display: "none", input: "", structure: "" });
 };
 const removeItem = (index) => {
   items.value.splice(index, 1);
@@ -145,7 +174,7 @@ const inputAtom = (index) => {
   viewer.setStyle({}, defaultStyle);
   atoms.value = [];
   if (inputAtomIndex) {
-    viewer.setStyle({index: inputAtomIndex}, newStyle);
+    viewer.setStyle({ index: inputAtomIndex }, newStyle);
     atoms.value.push(inputAtomIndex);
     viewer.render();
   } else {
@@ -160,14 +189,14 @@ const handleViewerCreated = (index, viewer) => {
 };
 // 处理配电房上传成功信息
 const handleDistributionRoom = (file) => {
-  console.log(file)
-  explorationFormData.value.distributionRoom.push(file)
-}
+  console.log(file);
+  explorationFormData.value.distributionRoom.push(file);
+};
 // 更新配电房文件
 const updateDistributionRoom = (files) => {
-  console.log(files)
-  explorationFormData.value.distributionRoom = files
-}
+  console.log(files);
+  explorationFormData.value.distributionRoom = files;
+};
 </script>
 
 <style scoped>
@@ -246,5 +275,10 @@ const updateDistributionRoom = (files) => {
   vertical-align: middle;
   flex-wrap: nowrap;
   display: none;
+}
+
+.fileUpload {
+  margin-left: 25px;
+  max-width: 600px;
 }
 </style>
