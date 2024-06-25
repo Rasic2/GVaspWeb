@@ -8,3 +8,4 @@ LOCPOT
 EIGENVAL
 *.db
 uploads
+/backend/plot.json

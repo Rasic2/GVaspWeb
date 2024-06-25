@@ -103,6 +103,7 @@
       </el-col>
     </el-row>
   </div>
+  <div v-html="svgContent"></div>
 </template>
 
 <script>
@@ -117,6 +118,7 @@ import CheckboxPdos from "@/components/CheckboxPdos.vue";
 import XyzDisplay from "@/components/StructureDisplay.vue";
 import FileUpload from "@/components/upload.vue";
 import $ from "jquery";
+import axios from "axios";
 
 // 父组件定义变量，共享给子组件（provide，inject）
 const defaultStyle = {
@@ -158,6 +160,7 @@ const uploadItem = {
 const uploadItems = ref([uploadItem, JSON.parse(JSON.stringify(uploadItem))]);
 
 const checkedTDOS = ref(false);
+const svgContent = ref("");
 
 // Computed
 
@@ -248,8 +251,32 @@ const inputAtom = (index) => {
 };
 
 // plot function
-const plot = () => {
-  console.log(checkedTDOS.value);
+const plot = async () => {
+  let contcarPath = uploadItems.value[0].fileLists[0];
+  let doscarPath = uploadItems.value[1].fileLists[0];
+  let params = {
+    "contcarPath": contcarPath,
+    "doscarPath": doscarPath,
+    "checkedTDOS": checkedTDOS.value
+  }
+  console.log(params);
+  try {
+    const res = await axios.post(
+        "http://127.0.0.1:5000/api/get_dos_data",
+        params,
+        {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+    );
+    if (res.status == 200) {
+      svgContent.value = res.data
+      console.log(res);
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 // 父组件获得子组件创建的 Viewer
