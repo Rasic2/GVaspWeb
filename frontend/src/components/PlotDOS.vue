@@ -16,9 +16,9 @@
           :limitNum="1"
           :type="4"
           :projectId="explorationFormData.projectId"
-          :fileList="explorationFormData.distributionRoom"
-          @uploadSuccess="handleDistributionRoom"
-          @updateFile="updateDistributionRoom"
+          :fileList="explorationFormData.fileLists"
+          @uploadSuccess="handleFileLists"
+          @updateFile="updateFileLists"
         >
         </file-upload>
       </el-form-item>
@@ -27,9 +27,9 @@
           :limitNum="1"
           :type="4"
           :projectId="explorationFormData.projectId"
-          :fileList="explorationFormData.distributionRoom"
-          @uploadSuccess="handleDistributionRoom"
-          @updateFile="updateDistributionRoom"
+          :fileList="explorationFormData.fileLists"
+          @uploadSuccess="handleFileLists"
+          @updateFile="updateFileLists"
         >
         </file-upload>
       </el-form-item>
@@ -157,8 +157,8 @@ const explorationFormData = ref({
   scene: [], // 现场
   installationSite: [], // 安装场地
   installationSiteOverview: "", // 安装场地概述
-  distributionRoom: [], // 配电房
-  distributionRoomOverview: "", // 配电房概述
+  fileLists: [], // 配电房
+  fileListsOverview: "", // 配电房概述
 });
 
 const checkedTDOS = ref(false);
@@ -168,22 +168,38 @@ const checkedTDOS = ref(false);
 /**
  * Whether to disable the plot button.
  *
- * 1. The number of distribution rooms is not equal to 2
+ * 1. The number of fileLists is not equal to 2
+ * 2. Each item in the items array should have a non-empty input and a non-empty orbitals array if the radio is not 1
+ * 3. The items array should not be empty if checkedTDOS is false
  */
 const plotDisabled = computed(() => {
-  if (explorationFormData.value.distributionRoom.length != 2) {
+  // Check if the fileLists length is not equal to 2
+  if (explorationFormData.value.fileLists.length !== 2) {
     return true;
-  } else {
-    if (items.value.length > 0 && items.value[0].input) {
-      return false;
-    } else {
-      if (!checkedTDOS.value) {
+  }
+
+  // Check if the items array is empty and checkedTDOS is false
+  if (items.value.length === 0 && !checkedTDOS.value) {
+    return true;
+  }
+
+  // Check each item in the items array
+  for (const item of items.value) {
+    // Check if the input is empty
+    if (item.input.trim() === "") {
+      return true;
+    }
+
+    // Check if the radio is not 1
+    if (item.radio !== "1") {
+      // Check if the orbitals array is empty
+      if (item.orbitals.length === 0) {
         return true;
-      } else {
-        return false;
       }
     }
   }
+
+  return false;
 });
 
 // Methods
@@ -246,15 +262,15 @@ const handleViewerCreated = (index, viewer) => {
 };
 
 // 处理配电房上传成功信息
-const handleDistributionRoom = (file) => {
+const handleFileLists = (file) => {
   console.log(file);
-  explorationFormData.value.distributionRoom.push(file);
+  explorationFormData.value.fileLists.push(file);
 };
 
 // 更新配电房文件
-const updateDistributionRoom = (files) => {
+const updateFileLists = (files) => {
   console.log(files);
-  explorationFormData.value.distributionRoom = files;
+  explorationFormData.value.fileLists = files;
 };
 
 /**
