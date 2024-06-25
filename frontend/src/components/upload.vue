@@ -11,12 +11,12 @@
     :limit="limitNum"
     :on-exceed="handleExceed"
   >
-    <el-button type="primary">上传文件</el-button>
+    <el-button type="primary" :disabled="isDisabled">上传文件</el-button>
   </el-upload>
 </template>
 
 <script setup>
-import { ref, watch, defineProps, defineEmits } from "vue";
+import { ref, watch, computed, defineProps, defineEmits } from "vue";
 import { ElMessage, ElMessageBox, ElLoading } from "element-plus";
 import axios from "axios";
 // import {uploadFileApi} from '../api/upload'
@@ -57,6 +57,10 @@ watch(
 const emits = defineEmits(["uploadSuccess", "updateFile"]);
 const formData = new FormData();
 
+const isDisabled = computed(() => {
+  return props.fileList.length >= props.limitNum;
+});
+
 // 上传图片
 const onUpload = async (file, fileList) => {
   console.log(fileList);
@@ -93,7 +97,7 @@ const onUpload = async (file, fileList) => {
       );
       if (res.status == 200) {
         loadingInstance.close();
-        console.log(res)
+        console.log(res);
         const obj = res.result;
         emits("uploadSuccess", obj);
       }
@@ -153,6 +157,6 @@ export default {
 
 .upload {
   width: 400px;
-  text-align:left;
+  text-align: left;
 }
 </style>
