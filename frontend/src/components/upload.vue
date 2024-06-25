@@ -93,6 +93,7 @@ const onUpload = async (file, fileList) => {
       );
       if (res.status == 200) {
         loadingInstance.close();
+        console.log(res)
         const obj = res.result;
         emits("uploadSuccess", obj);
       }

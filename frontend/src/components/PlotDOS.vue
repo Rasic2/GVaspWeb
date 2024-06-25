@@ -62,18 +62,29 @@
         </div>
       </div>
       <div v-if="item.radio == 2" class="inputPDOS">
-        <checkbox-pdos :l-orbital="'s'" :orbitals="[]"></checkbox-pdos>
         <checkbox-pdos
-          :l-orbital="'p'"
-          :orbitals="['px', 'py', 'pz']"
+          :sIndex="index"
+          :l-orbital="'全选'"
+          :orbitals="['s']"
+          @updateOrbitals="handleUpdateOrbitals"
         ></checkbox-pdos>
         <checkbox-pdos
-          :l-orbital="'d'"
-          :orbitals="['d1', 'd2', 'd3', 'd4', 'd5']"
+          :sIndex="index"
+          :l-orbital="'全选'"
+          :orbitals="['p', 'px', 'py', 'pz']"
+          @updateOrbitals="handleUpdateOrbitals"
         ></checkbox-pdos>
         <checkbox-pdos
-          :l-orbital="'f'"
-          :orbitals="['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7']"
+          :sIndex="index"
+          :l-orbital="'全选'"
+          :orbitals="['d', 'd1', 'd2', 'd3', 'd4', 'd5']"
+          @updateOrbitals="handleUpdateOrbitals"
+        ></checkbox-pdos>
+        <checkbox-pdos
+          :sIndex="index"
+          :l-orbital="'全选'"
+          :orbitals="['f', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7']"
+          @updateOrbitals="handleUpdateOrbitals"
         ></checkbox-pdos>
       </div>
       <!-- 子组件访问父组件的值 -->
@@ -88,12 +99,12 @@
     <el-button @click="addItem" class="expand_btn">+ 添加原子</el-button>
     <el-row>
       <el-col :span="6">
-        <el-checkbox v-model="checked1" label="Total DOS" />
+        <el-checkbox v-model="checkedTDOS" label="Total DOS" />
       </el-col>
     </el-row>
     <el-row>
       <el-col :span="6" :offset="18">
-        <el-button @click="plot">绘制</el-button>
+        <el-button @click="plot" :disabled="plotDisabled">绘制</el-button>
       </el-col>
     </el-row>
   </div>
@@ -106,21 +117,11 @@ export default {
 </script>
 
 <script setup>
-import { ref, provide } from "vue";
+import { ref, provide, computed } from "vue";
 import CheckboxPdos from "@/components/CheckboxPdos.vue";
 import XyzDisplay from "@/components/StructureDisplay.vue";
 import FileUpload from "@/components/upload.vue";
 import $ from "jquery";
-
-const explorationFormData = ref({
-  projectId: "",
-  projectName: "",
-  scene: [], // 现场
-  installationSite: [], // 安装场地
-  installationSiteOverview: "", // 安装场地概述
-  distributionRoom: [], // 配电房
-  distributionRoomOverview: "", // 配电房概述
-});
 
 // 父组件定义变量，共享给子组件（provide，inject）
 const defaultStyle = {
@@ -149,9 +150,51 @@ provide("updateItemsInput", (newValue, index) => {
   items.value[index]["input"] = newValue;
 });
 
+// Ref Variable
+const explorationFormData = ref({
+  projectId: "",
+  projectName: "",
+  scene: [], // 现场
+  installationSite: [], // 安装场地
+  installationSiteOverview: "", // 安装场地概述
+  distributionRoom: [], // 配电房
+  distributionRoomOverview: "", // 配电房概述
+});
+
+const checkedTDOS = ref(false);
+
+// Computed
+
+/**
+ * Whether to disable the plot button.
+ *
+ * 1. The number of distribution rooms is not equal to 2
+ */
+const plotDisabled = computed(() => {
+  if (explorationFormData.value.distributionRoom.length != 2) {
+    return true;
+  } else {
+    if (items.value.length > 0 && items.value[0].input) {
+      return false;
+    } else {
+      if (!checkedTDOS.value) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+});
+
 // Methods
 const addItem = () => {
-  items.value.push({ radio: "1", display: "none", input: "", structure: "" });
+  items.value.push({
+    radio: "1",
+    display: "none",
+    input: "",
+    orbitals: [],
+    structure: "",
+  });
 };
 const removeItem = (index) => {
   items.value.splice(index, 1);
@@ -168,6 +211,14 @@ const showStructure = (index) => {
   }
 };
 
+/**
+ * Updates the style of the viewer based on the input atom index and renders the viewer.
+ * If the input atom index is valid, it highlights the atom with the new style.
+ * Otherwise, it renders the viewer without any highlighting.
+ *
+ * @param {number} index - The index of the item in the items array.
+ * @return {void} This function does not return anything.
+ */
 const inputAtom = (index) => {
   const inputAtomIndex = parseInt(items.value[index]["input"], 10);
   let viewer = items.value[index]["structure"];
@@ -182,20 +233,54 @@ const inputAtom = (index) => {
   }
   console.log(atoms.value);
 };
+
+// plot function
+const plot = () => {
+  console.log(checkedTDOS.value);
+};
+
+// 父组件获得子组件创建的 Viewer
 const handleViewerCreated = (index, viewer) => {
-  // 父组件获得子组件创建的 Viewer
   items.value[index]["structure"] = viewer;
   console.log(items.value);
 };
+
 // 处理配电房上传成功信息
 const handleDistributionRoom = (file) => {
   console.log(file);
   explorationFormData.value.distributionRoom.push(file);
 };
+
 // 更新配电房文件
 const updateDistributionRoom = (files) => {
   console.log(files);
   explorationFormData.value.distributionRoom = files;
+};
+
+/**
+ * Handles the update of orbitals in the parent component.
+ *
+ * @param {String} mode - The mode of operation ('add' or 'remove').
+ * @param {Number} index - The index of the item.
+ * @param {Array} orbitals - The array of orbitals to be updated.
+ * @return {void} This function does not return a value.
+ */
+const handleUpdateOrbitals = (mode, index, orbitals) => {
+  if (!Array.isArray(orbitals)) {
+    throw new TypeError("'orbitals' must be an array");
+  }
+  if (mode === "add") {
+    orbitals.forEach((orbital) => {
+      items.value[index]["orbitals"].push(orbital);
+    });
+  } else if (mode === "remove") {
+    orbitals.forEach((orbital) => {
+      const orbitalIndex = items.value[index]["orbitals"].indexOf(orbital);
+      if (orbitalIndex !== -1) {
+        items.value[index]["orbitals"].splice(orbitalIndex, 1);
+      }
+    });
+  }
 };
 </script>
 
