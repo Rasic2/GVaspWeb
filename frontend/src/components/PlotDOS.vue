@@ -46,7 +46,7 @@
       <xyz-display :sIndex="index" :sItem="item" v-model="item.structure" class="structureDisplay"
         @viewer-created="handleViewerCreated"></xyz-display>
     </div>
-    <el-button @click="addItem" class="expand_btn">+ 添加原子</el-button>
+    <el-button @click="addItem" class="expand_btn" :disabled="addAtomDisabled">+ 添加原子</el-button>
     <el-row>
       <el-col :span="6">
         <el-checkbox v-model="checkedTDOS" label="Total DOS" />
@@ -120,6 +120,17 @@ const checkedTDOS = ref(false);
 
 // Computed
 
+const fileCount = computed(() => {
+  return uploadItems.value.reduce((sum, item) => sum + item.fileLists.length, 0)
+})
+
+const addAtomDisabled = computed(() => {
+  if (fileCount.value !== 2) {
+    return true;
+  }
+  return false;
+});
+
 /**
  * Whether to disable the plot button.
  *
@@ -129,11 +140,7 @@ const checkedTDOS = ref(false);
  */
 const plotDisabled = computed(() => {
   // Check if the fileLists length is not equal to 2
-  let fileCount = uploadItems.value.reduce(
-    (sum, item) => sum + item.fileLists.length,
-    0
-  );
-  if (fileCount !== 2) {
+  if (fileCount.value !== 2) {
     return true;
   }
 

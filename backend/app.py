@@ -1,9 +1,8 @@
-import json
 import os
 import sqlite3
 import uuid
 
-from flask import Flask, request, Response
+from flask import Flask, request
 from flask_cors import cross_origin
 from gvasp.common.file import OUTCAR, LOCPOT
 from gvasp.common.plot import DOSData
@@ -97,30 +96,15 @@ def plot_ep():
 @cross_origin(origins="*")
 def plot_dos():
     params = request.get_json()
-    plot_json = {
-        "width": 6,
-        "height": 4,
-        "fontsize": 10,
-        "xlim": [-35, 10],
-        "dos_file": [params['doscarPath']],
-        "pos_file": [params['contcarPath']],
-        "data": {"0": [{"color": "#ed0345"}]}
-    }
-    dosdata = DOSData(dos_file=params['doscarPath'], pos_file=params['contcarPath'])
-    x_data = dosdata.total_dos.index.values
-    y_up_data = dosdata.total_dos['tot_up'].values
-    y_down_data = dosdata.total_dos['tot_down'].values
+    dos_data = DOSData(dos_file=params['doscarPath'], pos_file=params['contcarPath'])
+    x_data = dos_data.total_dos.index.values
+    y_up_data = dos_data.total_dos['tot_up'].values
+    y_down_data = dos_data.total_dos['tot_down'].values
     total_dos = [[[x, y] for x, y in zip(x_data, y_up_data)], [[x, y] for x, y in zip(x_data, y_down_data)]]
     data = {
         "total_dos": total_dos
     }
 
-    with open("plot.json", "w") as f:
-        json.dump(plot_json, f)
-    os.system("gvasp plot dos -j plot.json --save")
-    with open("figure.svg", "r") as f:
-        svg_content = f.read()
-    # return Response(svg_content, mimetype='image/svg+xml')
     return data
 
 
