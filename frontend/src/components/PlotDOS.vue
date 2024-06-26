@@ -2,30 +2,30 @@
   <div class="atomSelect">
     <h1>态密度绘制参数设置</h1>
     <el-form
-        ref="ruleFormRef"
-        :model="ruleForm"
-        :rules="rules"
-        label-width="auto"
-        class="fileUpload"
-        :size="formSize"
-        status-icon
-        label-position="left"
+      ref="ruleFormRef"
+      :model="ruleForm"
+      :rules="rules"
+      label-width="auto"
+      class="fileUpload"
+      :size="formSize"
+      status-icon
+      label-position="left"
     >
       <el-form-item
-          v-for="(item, index) in ['CONTCAR', 'DOSCAR']"
-          :key="index"
-          :label="item"
-          prop="name"
-          required
+        v-for="(item, index) in ['CONTCAR', 'DOSCAR']"
+        :key="index"
+        :label="item"
+        prop="name"
+        required
       >
         <file-upload
-            :index="index"
-            :limitNum="1"
-            :type="4"
-            :projectId="uploadItems[index].projectId"
-            :fileList="uploadItems[index].fileLists"
-            @uploadSuccess="handleFileLists"
-            @updateFile="updateFileLists"
+          :index="index"
+          :limitNum="1"
+          :type="4"
+          :projectId="uploadItems[index].projectId"
+          :fileList="uploadItems[index].fileLists"
+          @uploadSuccess="handleFileLists"
+          @updateFile="updateFileLists"
         ></file-upload>
       </el-form-item>
     </el-form>
@@ -33,20 +33,20 @@
       <div class="inputLDOS">
         <div class="iconLayout">
           <el-icon @click="removeItem(index)">
-            <RemoveFilled/>
+            <RemoveFilled />
           </el-icon>
         </div>
         <div class="singleAtomInputPlus">
           <div class="singleAtomInput">
             <el-input
-                class="input"
-                v-model="item.input"
-                @input="inputAtom(index)"
-                placeholder="Please input atom index"
+              class="input"
+              v-model="item.input"
+              @input="inputAtom(index)"
+              placeholder="Please input atom index"
             />
             <div class="iconLayout">
               <el-icon @click="showStructure(index)">
-                <Management/>
+                <Management />
               </el-icon>
             </div>
             <el-radio-group v-model="item.radio" class="inputRadio">
@@ -58,43 +58,43 @@
       </div>
       <div v-if="item.radio == 2" class="inputPDOS">
         <checkbox-pdos
-            :sIndex="index"
-            :l-orbital="'全选'"
-            :orbitals="['s']"
-            @updateOrbitals="handleUpdateOrbitals"
+          :sIndex="index"
+          :l-orbital="'全选'"
+          :orbitals="['s']"
+          @updateOrbitals="handleUpdateOrbitals"
         ></checkbox-pdos>
         <checkbox-pdos
-            :sIndex="index"
-            :l-orbital="'全选'"
-            :orbitals="['p', 'px', 'py', 'pz']"
-            @updateOrbitals="handleUpdateOrbitals"
+          :sIndex="index"
+          :l-orbital="'全选'"
+          :orbitals="['p', 'px', 'py', 'pz']"
+          @updateOrbitals="handleUpdateOrbitals"
         ></checkbox-pdos>
         <checkbox-pdos
-            :sIndex="index"
-            :l-orbital="'全选'"
-            :orbitals="['d', 'd1', 'd2', 'd3', 'd4', 'd5']"
-            @updateOrbitals="handleUpdateOrbitals"
+          :sIndex="index"
+          :l-orbital="'全选'"
+          :orbitals="['d', 'd1', 'd2', 'd3', 'd4', 'd5']"
+          @updateOrbitals="handleUpdateOrbitals"
         ></checkbox-pdos>
         <checkbox-pdos
-            :sIndex="index"
-            :l-orbital="'全选'"
-            :orbitals="['f', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7']"
-            @updateOrbitals="handleUpdateOrbitals"
+          :sIndex="index"
+          :l-orbital="'全选'"
+          :orbitals="['f', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7']"
+          @updateOrbitals="handleUpdateOrbitals"
         ></checkbox-pdos>
       </div>
       <!-- 子组件访问父组件的值 -->
       <xyz-display
-          :sIndex="index"
-          :sItem="item"
-          v-model="item.structure"
-          class="structureDisplay"
-          @viewer-created="handleViewerCreated"
+        :sIndex="index"
+        :sItem="item"
+        v-model="item.structure"
+        class="structureDisplay"
+        @viewer-created="handleViewerCreated"
       ></xyz-display>
     </div>
     <el-button @click="addItem" class="expand_btn">+ 添加原子</el-button>
     <el-row>
       <el-col :span="6">
-        <el-checkbox v-model="checkedTDOS" label="Total DOS"/>
+        <el-checkbox v-model="checkedTDOS" label="Total DOS" />
       </el-col>
     </el-row>
     <el-row>
@@ -113,7 +113,7 @@ export default {
 </script>
 
 <script setup>
-import {ref, provide, computed} from "vue";
+import { ref, provide, computed } from "vue";
 import CheckboxPdos from "@/components/CheckboxPdos.vue";
 import XyzDisplay from "@/components/StructureDisplay.vue";
 import FileUpload from "@/components/upload.vue";
@@ -122,12 +122,12 @@ import axios from "axios";
 
 // 父组件定义变量，共享给子组件（provide，inject）
 const defaultStyle = {
-  stick: {radius: 0.2, colorscheme: "Jmol"},
-  sphere: {scale: 0.35, colorscheme: "Jmol"},
+  stick: { radius: 0.2, colorscheme: "Jmol" },
+  sphere: { scale: 0.35, colorscheme: "Jmol" },
 };
 const newStyle = {
-  stick: {radius: 0.2, color: "yellow"},
-  sphere: {scale: 0.35, color: "yellow"},
+  stick: { radius: 0.2, color: "yellow" },
+  sphere: { scale: 0.35, color: "yellow" },
 };
 provide("defaultStyle", defaultStyle);
 provide("newStyle", newStyle);
@@ -156,7 +156,7 @@ const uploadItem = {
   installationSiteOverview: "",
   fileLists: [],
   fileListsOverview: "",
-}
+};
 const uploadItems = ref([uploadItem, JSON.parse(JSON.stringify(uploadItem))]);
 
 const checkedTDOS = ref(false);
@@ -173,7 +173,10 @@ const svgContent = ref("");
  */
 const plotDisabled = computed(() => {
   // Check if the fileLists length is not equal to 2
-  let fileCount = uploadItems.value.reduce((sum, item) => sum + item.fileLists.length, 0);
+  let fileCount = uploadItems.value.reduce(
+    (sum, item) => sum + item.fileLists.length,
+    0
+  );
   if (fileCount !== 2) {
     return true;
   }
@@ -203,6 +206,12 @@ const plotDisabled = computed(() => {
 });
 
 // Methods
+
+/**
+ * Adds a new item to the `items` array.
+ *
+ * @return {void} This function does not return anything.
+ */
 const addItem = () => {
   items.value.push({
     radio: "1",
@@ -212,9 +221,23 @@ const addItem = () => {
     structure: "",
   });
 };
+
+/**
+ * Removes an item from the `items` array at the specified index.
+ *
+ * @param {number} index - The index of the item to remove.
+ * @return {void} This function does not return anything.
+ */
 const removeItem = (index) => {
   items.value.splice(index, 1);
 };
+
+/**
+ * Toggles the visibility of a structure display element based on its current state.
+ *
+ * @param {number} index - The index of the item in the `items` array.
+ * @return {void} This function does not return anything.
+ */
 const showStructure = (index) => {
   const structureDisplay = $(".structureDisplay");
   if (items.value[index]["display"] === "none") {
@@ -241,7 +264,7 @@ const inputAtom = (index) => {
   viewer.setStyle({}, defaultStyle);
   atoms.value = [];
   if (inputAtomIndex) {
-    viewer.setStyle({index: inputAtomIndex}, newStyle);
+    viewer.setStyle({ index: inputAtomIndex }, newStyle);
     atoms.value.push(inputAtomIndex);
     viewer.render();
   } else {
@@ -250,28 +273,32 @@ const inputAtom = (index) => {
   console.log(atoms.value);
 };
 
-// plot function
+/**
+ * Asynchronously sends a POST request to fetch DOS data based on the provided paths.
+ *
+ * @return {void} This function does not return anything.
+ */
 const plot = async () => {
   let contcarPath = uploadItems.value[0].fileLists[0];
   let doscarPath = uploadItems.value[1].fileLists[0];
   let params = {
-    "contcarPath": contcarPath,
-    "doscarPath": doscarPath,
-    "checkedTDOS": checkedTDOS.value
-  }
+    contcarPath: contcarPath,
+    doscarPath: doscarPath,
+    checkedTDOS: checkedTDOS.value,
+  };
   console.log(params);
   try {
     const res = await axios.post(
-        "http://127.0.0.1:5000/api/get_dos_data",
-        params,
-        {
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-          },
-        }
+      "http://127.0.0.1:5000/api/get_dos_data",
+      params,
+      {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        },
+      }
     );
     if (res.status == 200) {
-      svgContent.value = res.data
+      svgContent.value = res.data;
       console.log(res);
     }
   } catch (error) {
@@ -279,20 +306,36 @@ const plot = async () => {
   }
 };
 
-// 父组件获得子组件创建的 Viewer
+/**
+ * Assigns the viewer to the structure at the specified index in the items array.
+ *
+ * @param {number} index - The index of the item in the items array.
+ * @param {Object} viewer - The viewer to be assigned to the structure.
+ */
 const handleViewerCreated = (index, viewer) => {
   items.value[index]["structure"] = viewer;
   console.log(items.value);
 };
 
-// 处理配电房上传成功信息
+/**
+ * Handles the file list for a specific index.
+ *
+ * @param {number} index - The index of the item in the items array.
+ * @param {Object} file - The file to be added to the file list.
+ */
 const handleFileLists = (index, file) => {
   console.log("handleFileLists: file", file);
   uploadItems.value[index].fileLists.push(file);
   console.log("handleFileLists: fileLists", uploadItems.value);
 };
 
-// 更新配电房文件
+/**
+ * Updates the file lists for a specific index.
+ *
+ * @param {number} index - The index of the item in the uploadItems array.
+ * @param {Array} files - The new file list to be assigned to the item.
+ * @return {void}
+ */
 const updateFileLists = (index, files) => {
   console.log("updateFileLists: files", files);
   uploadItems.value[index].fileLists = files;
