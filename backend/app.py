@@ -6,6 +6,7 @@ import uuid
 from flask import Flask, request, Response
 from flask_cors import cross_origin
 from gvasp.common.file import OUTCAR, LOCPOT
+from gvasp.common.plot import DOSData
 
 app = Flask(__name__)
 
@@ -105,12 +106,22 @@ def plot_dos():
         "pos_file": [params['contcarPath']],
         "data": {"0": [{"color": "#ed0345"}]}
     }
+    dosdata = DOSData(dos_file=params['doscarPath'], pos_file=params['contcarPath'])
+    x_data = dosdata.total_dos.index.values
+    y_up_data = dosdata.total_dos['tot_up'].values
+    y_down_data = dosdata.total_dos['tot_down'].values
+    total_dos = [[[x, y] for x, y in zip(x_data, y_up_data)], [[x, y] for x, y in zip(x_data, y_down_data)]]
+    data = {
+        "total_dos": total_dos
+    }
+
     with open("plot.json", "w") as f:
         json.dump(plot_json, f)
     os.system("gvasp plot dos -j plot.json --save")
     with open("figure.svg", "r") as f:
         svg_content = f.read()
-    return Response(svg_content, mimetype='image/svg+xml')
+    # return Response(svg_content, mimetype='image/svg+xml')
+    return data
 
 
 if __name__ == '__main__':

@@ -1,32 +1,12 @@
 <template>
   <div class="atomSelect">
     <h1>态密度绘制参数设置</h1>
-    <el-form
-      ref="ruleFormRef"
-      :model="ruleForm"
-      :rules="rules"
-      label-width="auto"
-      class="fileUpload"
-      :size="formSize"
-      status-icon
-      label-position="left"
-    >
-      <el-form-item
-        v-for="(item, index) in ['CONTCAR', 'DOSCAR']"
-        :key="index"
-        :label="item"
-        prop="name"
-        required
-      >
-        <file-upload
-          :index="index"
-          :limitNum="1"
-          :type="4"
-          :projectId="uploadItems[index].projectId"
-          :fileList="uploadItems[index].fileLists"
-          @uploadSuccess="handleFileLists"
-          @updateFile="updateFileLists"
-        ></file-upload>
+    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="auto" class="fileUpload" :size="formSize"
+      status-icon label-position="left">
+      <el-form-item v-for="(item, index) in ['CONTCAR', 'DOSCAR']" :key="index" :label="item" prop="name" required>
+        <file-upload :index="index" :limitNum="1" :type="4" :projectId="uploadItems[index].projectId"
+          :fileList="uploadItems[index].fileLists" @uploadSuccess="handleFileLists"
+          @updateFile="updateFileLists"></file-upload>
       </el-form-item>
     </el-form>
     <div class="singleAtom" v-for="(item, index) in items" :key="index">
@@ -38,12 +18,8 @@
         </div>
         <div class="singleAtomInputPlus">
           <div class="singleAtomInput">
-            <el-input
-              class="input"
-              v-model="item.input"
-              @input="inputAtom(index)"
-              placeholder="Please input atom index"
-            />
+            <el-input class="input" v-model="item.input" @input="inputAtom(index)"
+              placeholder="Please input atom index" />
             <div class="iconLayout">
               <el-icon @click="showStructure(index)">
                 <Management />
@@ -57,39 +33,18 @@
         </div>
       </div>
       <div v-if="item.radio == 2" class="inputPDOS">
-        <checkbox-pdos
-          :sIndex="index"
-          :l-orbital="'全选'"
-          :orbitals="['s']"
-          @updateOrbitals="handleUpdateOrbitals"
-        ></checkbox-pdos>
-        <checkbox-pdos
-          :sIndex="index"
-          :l-orbital="'全选'"
-          :orbitals="['p', 'px', 'py', 'pz']"
-          @updateOrbitals="handleUpdateOrbitals"
-        ></checkbox-pdos>
-        <checkbox-pdos
-          :sIndex="index"
-          :l-orbital="'全选'"
-          :orbitals="['d', 'd1', 'd2', 'd3', 'd4', 'd5']"
-          @updateOrbitals="handleUpdateOrbitals"
-        ></checkbox-pdos>
-        <checkbox-pdos
-          :sIndex="index"
-          :l-orbital="'全选'"
-          :orbitals="['f', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7']"
-          @updateOrbitals="handleUpdateOrbitals"
-        ></checkbox-pdos>
+        <checkbox-pdos :sIndex="index" :l-orbital="'全选'" :orbitals="['s']"
+          @updateOrbitals="handleUpdateOrbitals"></checkbox-pdos>
+        <checkbox-pdos :sIndex="index" :l-orbital="'全选'" :orbitals="['p', 'px', 'py', 'pz']"
+          @updateOrbitals="handleUpdateOrbitals"></checkbox-pdos>
+        <checkbox-pdos :sIndex="index" :l-orbital="'全选'" :orbitals="['d', 'd1', 'd2', 'd3', 'd4', 'd5']"
+          @updateOrbitals="handleUpdateOrbitals"></checkbox-pdos>
+        <checkbox-pdos :sIndex="index" :l-orbital="'全选'" :orbitals="['f', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7']"
+          @updateOrbitals="handleUpdateOrbitals"></checkbox-pdos>
       </div>
       <!-- 子组件访问父组件的值 -->
-      <xyz-display
-        :sIndex="index"
-        :sItem="item"
-        v-model="item.structure"
-        class="structureDisplay"
-        @viewer-created="handleViewerCreated"
-      ></xyz-display>
+      <xyz-display :sIndex="index" :sItem="item" v-model="item.structure" class="structureDisplay"
+        @viewer-created="handleViewerCreated"></xyz-display>
     </div>
     <el-button @click="addItem" class="expand_btn">+ 添加原子</el-button>
     <el-row>
@@ -103,7 +58,7 @@
       </el-col>
     </el-row>
   </div>
-  <div v-html="svgContent"></div>
+  <div id="dosEchart"></div>
 </template>
 
 <script>
@@ -119,6 +74,7 @@ import XyzDisplay from "@/components/StructureDisplay.vue";
 import FileUpload from "@/components/upload.vue";
 import $ from "jquery";
 import axios from "axios";
+import * as echarts from "echarts";
 
 // 父组件定义变量，共享给子组件（provide，inject）
 const defaultStyle = {
@@ -160,7 +116,7 @@ const uploadItem = {
 const uploadItems = ref([uploadItem, JSON.parse(JSON.stringify(uploadItem))]);
 
 const checkedTDOS = ref(false);
-const svgContent = ref("");
+// const svgContent = ref("");
 
 // Computed
 
@@ -287,19 +243,93 @@ const plot = async () => {
     checkedTDOS: checkedTDOS.value,
   };
   console.log(params);
+  let dosEchart = echarts.init(document.getElementById("dosEchart"));
+  dosEchart.showLoading({ maskColor: "rgba(3,3,8,0.5)", textColor: "#fff600" });
   try {
-    const res = await axios.post(
-      "http://127.0.0.1:5000/api/get_dos_data",
-      params,
-      {
-        headers: {
-          "Access-Control-Allow-Origin": "*",
+    const res1 = await axios.post("http://127.0.0.1:5000/api/get_dos_data", params, {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+    if (res1.status == 200) {
+      dosEchart.hideLoading();
+
+      /** @type EChartsOption */
+      var dosOption = {
+        tooltip: {
+          trigger: 'axis',
+          formatter: function (params) {
+            var tooltipContent = '<div style="text-align: left;">';
+            var xAxisValue = parseFloat(params[0].axisValue).toFixed(2);
+            tooltipContent += `<div style="font-weight: bold; margin-bottom: 5px;">${xAxisValue}</div>`;
+            tooltipContent += '<table>';
+            params.forEach(function (item) {
+              tooltipContent += `<tr>
+                    <td style="text-align: left; padding-right: 10px;">${item.marker}${item.seriesName}</td>
+                    <td style="text-align: right; font-weight: bold;">${item.value[1]}</td>
+                </tr>`;
+            });
+            tooltipContent += '</table>';
+            tooltipContent += '</div>';
+            return tooltipContent;
+          },
         },
-      }
-    );
-    if (res.status == 200) {
-      svgContent.value = res.data;
-      console.log(res);
+        xAxis: [
+          {
+            name: "Energy (eV)",
+            nameLocation: "center",
+            nameGap: 25,
+          },
+        ],
+        yAxis:
+        {
+          name: "Density of States (a.u.)",
+          nameLocation: "center",
+          nameGap: 45,
+          max: function (value) {
+            return Math.ceil(value.max);
+          },
+          min: function (value) {
+            return Math.floor(value.min);
+          },
+        },
+        dataZoom: [
+          {
+            type: "inside",
+          },
+        ],
+        series: [
+          {
+            name: "Total-DOS-Up",
+            type: "line",
+            data: res1.data["total_dos"][0],
+            lineStyle: {
+              color: '#ed0345',
+            },
+            itemStyle: {
+              color: '#ed0345',
+            },
+            label: {
+              show: false,
+            },
+          },
+          {
+            name: "Total-DOS-Down",
+            data: res1.data["total_dos"][1],
+            type: "line",
+            lineStyle: {
+              color: '#ed0345',
+            },
+            itemStyle: {
+              color: '#ed0345',
+            },
+            label: {
+              show: false,
+            },
+          },
+        ],
+      };
+      dosEchart.setOption(dosOption);
     }
   } catch (error) {
     console.log(error);
@@ -369,6 +399,13 @@ const handleUpdateOrbitals = (mode, index, orbitals) => {
 </script>
 
 <style scoped>
+#dosEchart {
+  width: 570px;
+  height: 380px;
+  display: flex;
+  float: right
+}
+
 .atomSelect {
   width: 600px;
   padding-bottom: 20px;
