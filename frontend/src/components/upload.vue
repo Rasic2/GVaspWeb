@@ -80,7 +80,7 @@ const isDisabled = computed(() => {
 const onUpload = async (file, fileList) => {
   console.log("onUpload: fileList", fileList);
   let rawFile = file.raw;
-  formData.append("folder", file.raw);
+  formData.append("file", file.raw);
   if (
     (rawFile.type == "image/jpeg" && rawFile.size / 1024 / 1024 > 10) ||
     (rawFile.type == "image/png" && rawFile.size / 1024 / 1024 > 10) ||

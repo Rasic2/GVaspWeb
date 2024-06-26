@@ -1,16 +1,11 @@
 <template>
   <div>
     <div :id="'displayMol' + sIndex" class="structureView"></div>
-    <!-- <div id="selectAtom">
-      <ul>
-        <li v-for="(item, index) in atoms" :key="index">{{ item }}</li>
-      </ul>
-    </div> -->
   </div>
 </template>
 
 <script setup>
-import {defineProps, defineEmits, onMounted, ref, inject} from "vue";
+import { defineProps, defineEmits, onMounted, ref, inject } from "vue";
 import $ from "jquery";
 
 const atoms = inject("atoms");
@@ -36,13 +31,7 @@ const props = defineProps({
 // 父组件获得子组件创建的 Viewer，子组件通过 emit 来定义
 const emit = defineEmits(["viewer-created"]);
 
-// 父组件通过 Ref 更新子组件的值（子组件的变量定义）
-// let atoms = ref([]);
-// defineExpose({
-//   atoms,
-// });
-
-let xyzContent = ref(`# generated using pymatgen
+let fileContent = ref(`# generated using pymatgen
 data_CeO3
 _symmetry_space_group_name_H-M   'P 1'
 _cell_length_a   6.06488433
@@ -83,51 +72,51 @@ const display = () => {
   let element = $("#displayMol" + props.sIndex);
   console.log(element);
   console.log(props.sItem["input"]);
-  let config = {backgroundColor: "white"};
+  let config = { backgroundColor: "white" };
   const newStyle = inject("newStyle");
   const defaultStyle = inject("defaultStyle");
   // eslint-disable-next-line no-undef
   import("/Users/hui_zhou/Project/3Dmol.js/build/3Dmol-min").then(($3Dmol) => {
     const viewer = $3Dmol.createViewer(element, config);
-    let m = viewer.addModel(xyzContent.value, "cif"); // 需要去掉 Selective 行
+    let m = viewer.addModel(fileContent.value, "cif"); // 需要去掉 Selective 行
     viewer.addUnitCell(m);
     viewer.setStyle({}, defaultStyle);
 
     viewer.setHoverable(
-        {},
-        true,
-        function (atom, viewer1) {
-          if (!atom.label) {
-            atom.label = viewer1.addLabel(
-                atom.elem +
-                ` (${atom.x.toFixed(2)}, ${atom.y.toFixed(2)}, ${atom.z.toFixed(
-                    2
-                )})`,
-                {
-                  position: atom,
-                  backgroundColor: "mintcream",
-                  fontColor: "black",
-                }
-            );
-          }
-        },
-        function (atom) {
-          if (atom.label) {
-            viewer.removeLabel(atom.label);
-            delete atom.label;
-          }
+      {},
+      true,
+      function (atom, viewer1) {
+        if (!atom.label) {
+          atom.label = viewer1.addLabel(
+            atom.elem +
+            ` (${atom.x.toFixed(2)}, ${atom.y.toFixed(2)}, ${atom.z.toFixed(
+              2
+            )})`,
+            {
+              position: atom,
+              backgroundColor: "mintcream",
+              fontColor: "black",
+            }
+          );
         }
+      },
+      function (atom) {
+        if (atom.label) {
+          viewer.removeLabel(atom.label);
+          delete atom.label;
+        }
+      }
     );
     viewer.setClickable({}, true, function (atom, viewer1) {
       let atomItem = atom.index + 1;
       if (!atoms.value.includes(atomItem)) {
-        viewer1.setStyle({index: atom.index}, newStyle);
+        viewer1.setStyle({ index: atom.index }, newStyle);
         addAtoms(atom.index + 1);
         console.log("atoms after add", atoms.value)
         viewer1.render();
         updateItemsInput(atoms.value.join(","), props.sIndex)
       } else {
-        viewer1.setStyle({index: atom.index}, defaultStyle);
+        viewer1.setStyle({ index: atom.index }, defaultStyle);
         removeAtoms(atomItem);
         console.log("atoms after remove", atoms.value)
         updateItemsInput(atoms.value.join(","), props.sIndex)

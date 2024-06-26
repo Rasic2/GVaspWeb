@@ -3,11 +3,12 @@ import sqlite3
 import uuid
 
 from flask import Flask, request
-from flask_cors import cross_origin
-from gvasp.common.file import OUTCAR, LOCPOT
+from flask_cors import cross_origin, CORS
+from gvasp.common.file import OUTCAR, LOCPOT, CONTCAR
 from gvasp.common.plot import DOSData
 
 app = Flask(__name__)
+CORS(app)
 
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -30,35 +31,39 @@ conn.close()
 @cross_origin(origins="*")
 def upload_file():
     if request.method == 'POST':
-        if 'folder' not in request.files:
-            return 'No folder part'
-        folder = request.files.getlist('folder')
+        if 'file' not in request.files:
+            return 'No file part'
+        files = request.files.getlist('file')
+        conn = sqlite3.connect('file_mapping.db')
+        c = conn.cursor()
+        file = files[0]
+
+        if file.filename == '':
+            return '没有选择文件'
         try:
-            conn = sqlite3.connect('file_mapping.db')
-            # noinspection PyShadowingNames
-            c = conn.cursor()
-            for file in folder:
-                if file.filename == '':
-                    return '没有选择文件'
-                if file:
-                    original_filename = file.filename
-                    # 查询数据库，检查文件名是否已经存在
-                    c.execute("SELECT * FROM files WHERE original_filename=?", (original_filename,))
-                    existing_file = c.fetchone()
-                    if existing_file:
-                        new_filename = existing_file[2]
-                        file_path = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
-                        continue
-                    else:
-                        # 生成唯一的文件名
-                        new_filename = str(uuid.uuid4()) + os.path.splitext(original_filename)[1]
-                        file_path = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
-                        file.save(file_path)
-                        # 存储原始文件名和新文件名的关联关系到数据库
-                        c.execute("INSERT INTO files (original_filename, new_filename) VALUES (?, ?)",
-                                  (original_filename, new_filename))
+            original_filename = file.filename
+            # 查询数据库，检查文件名是否已经存在
+            c.execute("SELECT * FROM files WHERE original_filename=?", (original_filename,))
+            existing_file = c.fetchone()
+            if existing_file:
+                new_filename = existing_file[2]
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
+            else:
+                # 生成唯一的文件名
+                new_filename = str(uuid.uuid4()) + os.path.splitext(original_filename)[1]
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
+                file.save(file_path)
+                # 存储原始文件名和新文件名的关联关系到数据库
+                c.execute("INSERT INTO files (original_filename, new_filename) VALUES (?, ?)",
+                          (original_filename, new_filename))
             conn.commit()
-            return file_path
+            try:
+                contcar = CONTCAR(file_path)
+                _ = contcar.structure
+                file_content = ''.join(contcar.strings)
+            except Exception:
+                file_content = None
+            return {"filePath": file_path, "fileContent": file_content}
         except Exception as e:
             return '文件上载过程中出错: {}'.format(str(e))
         finally:

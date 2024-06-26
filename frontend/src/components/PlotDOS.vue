@@ -43,8 +43,8 @@
           @updateOrbitals="handleUpdateOrbitals"></checkbox-pdos>
       </div>
       <!-- 子组件访问父组件的值 -->
-      <xyz-display :sIndex="index" :sItem="item" v-model="item.structure" class="structureDisplay"
-        @viewer-created="handleViewerCreated"></xyz-display>
+      <xyz-display :sIndex="index" :sItem="item" :structureFileContent="structureFileContent" v-model="item.structure"
+        class="structureDisplay" @viewer-created="handleViewerCreated"></xyz-display>
     </div>
     <el-button @click="addItem" class="expand_btn" :disabled="addAtomDisabled">+ 添加原子</el-button>
     <el-row>
@@ -116,7 +116,7 @@ const uploadItem = {
 const uploadItems = ref([uploadItem, JSON.parse(JSON.stringify(uploadItem))]);
 
 const checkedTDOS = ref(false);
-// const svgContent = ref("");
+const structureFileContent = ref("")
 
 // Computed
 
@@ -242,8 +242,8 @@ const inputAtom = (index) => {
  * @return {void} This function does not return anything.
  */
 const plot = async () => {
-  let contcarPath = uploadItems.value[0].fileLists[0];
-  let doscarPath = uploadItems.value[1].fileLists[0];
+  let contcarPath = uploadItems.value[0].fileLists[0]['filePath'];
+  let doscarPath = uploadItems.value[1].fileLists[0]['filePath'];
   let params = {
     contcarPath: contcarPath,
     doscarPath: doscarPath,
