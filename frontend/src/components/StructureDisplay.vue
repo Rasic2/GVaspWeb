@@ -51,6 +51,34 @@ const display = () => {
     viewer.addUnitCell(m, { alabel: 'A', blabel: 'B', clabel: 'C', astyle: { color: 'red', radius: 0.2, midpos: -1 }, bstyle: { color: 'green', radius: 0.2, midpos: -1 }, cstyle: { color: 'blue', radius: 0.2, midpos: -1 } });
     viewer.setStyle({}, defaultStyle);
 
+
+    /**
+     * Handles keydown events and performs specific actions based on the pressed key.
+     *
+     * @param {KeyboardEvent} event - The keyboard event object.
+     * @return {void} This function does not return anything.
+     */
+    const handleKeydown = (event) => {
+      switch (event.key) {
+        case 'r':
+          viewer.rotate(90, 'y');
+          viewer.render();
+          break;
+        case 'z':
+          viewer.zoomTo();
+          viewer.render();
+          break;
+        case 'c':
+          viewer.setStyle({}, { cartoon: {} });
+          viewer.render();
+          break;
+        // Add more cases here for additional shortcuts
+        default:
+          break;
+      }
+    };
+    document.addEventListener('keydown', handleKeydown);
+
     viewer.setHoverable(
       {},
       true,
@@ -100,6 +128,10 @@ const display = () => {
   });
 };
 onMounted(display);
+// onBeforeUnmount(() => {
+//   // Clean up event listener
+//   document.removeEventListener('keydown', handleKeydown);
+// });
 </script>
 
 <script>

@@ -250,8 +250,8 @@ const plot = async () => {
     checkedTDOS: checkedTDOS.value,
     atoms: items.value.map((item) => Object({ radio: item.radio, input: item.input, orbitals: item.orbitals }))
   };
-  console.log(params);
   let dosEchart = echarts.init(document.getElementById("dosEchart"));
+  dosEchart.clear();
   dosEchart.showLoading({ maskColor: "rgba(3,3,8,0.5)", textColor: "#fff600" });
   try {
     const res1 = await axios.post("http://127.0.0.1:5000/api/get_dos_data", params, {
@@ -274,7 +274,7 @@ const plot = async () => {
             params.forEach(function (item) {
               tooltipContent += `<tr>
                     <td style="text-align: left; padding-right: 10px;">${item.marker}${item.seriesName}</td>
-                    <td style="text-align: right; font-weight: bold;">${item.value[1]}</td>
+                    <td style="text-align: right; font-weight: bold;">${item.value[1].toFixed(2)}</td>
                 </tr>`;
             });
             tooltipContent += '</table>';
