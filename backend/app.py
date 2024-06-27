@@ -100,33 +100,37 @@ def plot_ep():
 @app.route('/api/get_dos_data', methods=['POST'])
 @cross_origin(origins="*")
 def plot_dos():
+    colors = ['#01545a', '#ed0345', '#ef6932', '#710162', '#017351', '#03c383', '#aad962', '#fbbf45',
+              '#a12a5e', '#047df6', '#FFFF33', 'FF2CF2', '#F1D1E1', '#E6FFE7']
     params = request.get_json()
     multi_atoms = [list(map(lambda x: int(x), atom['input'].split(','), )) for atom in params['atoms']]
     orbitals = [atom['orbitals'] for atom in params['atoms']]
     multi_orbitals = [None for item in orbitals if not len(item)]
-    dos_data = DOSData(dos_file=params['doscarPath'], pos_file=params['contcarPath'])
+    dos_data = DOSData(dos_file=params['doscarPath'], pos_file=params['contcarPath'], magnification=1)
 
-    default_style = {'lineStyle': {'color': '#ed0345'},
-                     'itemStyle': {'color': '#ed0345'},
-                     'type': 'line',
+    default_style = {'type': 'line',
                      'label': {'show': False}}
     data = []
-    for index, (atoms, orbitals) in enumerate(zip(multi_atoms, multi_orbitals)):
+    for index, (atoms, orbitals, color) in enumerate(zip(multi_atoms, multi_orbitals, colors)):
         inner_data = dos_data.get_data(atoms=atoms, orbitals=orbitals)
+        color_dict = {'lineStyle': {'color': color},
+                      'itemStyle': {'color': color}}
         up_dict = {'name': f'L{index + 1}_up', 'data': [[x, y] for x, y in zip(inner_data.energy, inner_data.up)]}
         down_dict = {'name': f'L{index + 1}_down', 'data': [[x, y] for x, y in zip(inner_data.energy, inner_data.down)]}
-        data.append({**default_style, **up_dict})
-        data.append({**default_style, **down_dict})
+        data.append({**default_style, **up_dict, **color_dict})
+        data.append({**default_style, **down_dict, **color_dict})
 
     if params['checkedTDOS']:
+        color_dict = {'lineStyle': {'color': '#000000'},
+                      'itemStyle': {'color': '#000000'}}
         x_data = dos_data.total_dos.index.values
         y_up_data = dos_data.total_dos['tot_up'].values
         y_down_data = dos_data.total_dos['tot_down'].values
         total_dos = [[[x, y] for x, y in zip(x_data, y_up_data)], [[x, y] for x, y in zip(x_data, y_down_data)]]
         tup_dict = {'name': 'TDOS_up', 'data': total_dos[0]}
         tdown_dict = {'name': 'TDOS_down', 'data': total_dos[1]}
-        data.append({**default_style, **tup_dict})
-        data.append({**default_style, **tdown_dict})
+        data.append({**default_style, **tup_dict, **color_dict})
+        data.append({**default_style, **tdown_dict, **color_dict})
 
     return {"series": data}
 

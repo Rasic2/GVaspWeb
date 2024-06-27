@@ -261,6 +261,7 @@ const plot = async () => {
     });
     if (res1.status == 200) {
       dosEchart.hideLoading();
+      console.log(res1.data.series)
       /** @type EChartsOption */
       var dosOption = {
         tooltip: {
@@ -280,6 +281,9 @@ const plot = async () => {
             tooltipContent += '</div>';
             return tooltipContent;
           },
+        },
+        legend: {
+          show: true,
         },
         xAxis: [
           {
