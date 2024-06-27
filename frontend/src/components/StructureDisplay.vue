@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, onMounted, ref, inject } from "vue";
+import { defineProps, defineEmits, onMounted, inject } from "vue";
 import $ from "jquery";
 
 const atoms = inject("atoms");
@@ -26,46 +26,14 @@ const props = defineProps({
     default: () => {
     },
   },
+  structureFileContent: {
+    type: String,
+    default: ""
+  }
 });
 
 // 父组件获得子组件创建的 Viewer，子组件通过 emit 来定义
 const emit = defineEmits(["viewer-created"]);
-
-let fileContent = ref(`# generated using pymatgen
-data_CeO3
-_symmetry_space_group_name_H-M   'P 1'
-_cell_length_a   6.06488433
-_cell_length_b   6.06488433
-_cell_length_c   3.64122000
-_cell_angle_alpha   90.00000000
-_cell_angle_beta   90.00000000
-_cell_angle_gamma   120.00000364
-_symmetry_Int_Tables_number   1
-_chemical_formula_structural   CeO3
-_chemical_formula_sum   'Ce2 O6'
-_cell_volume   115.99054273
-_cell_formula_units_Z   2
-loop_
-_symmetry_equiv_pos_site_id
-_symmetry_equiv_pos_as_xyz
-1  'x, y, z'
-loop_
-_atom_site_type_symbol
-_atom_site_label
-_atom_site_symmetry_multiplicity
-_atom_site_fract_x
-_atom_site_fract_y
-_atom_site_fract_z
-_atom_site_occupancy
-Ce  Ce0  1  0.33333300  0.66666700  0.75000000  1
-Ce  Ce1  1  0.66666700  0.33333300  0.25000000  1
-O  O2  1  0.91327400  0.58959600  0.75000000  1
-O  O3  1  0.08672600  0.41040400  0.25000000  1
-O  O4  1  0.67632100  0.08672600  0.75000000  1
-O  O5  1  0.32367900  0.91327400  0.25000000  1
-O  O6  1  0.41040400  0.32367900  0.75000000  1
-O  O7  1  0.58959600  0.67632100  0.25000000  1
-`);
 
 const display = () => {
   // eslint-disable-next-line no-undef
@@ -78,8 +46,9 @@ const display = () => {
   // eslint-disable-next-line no-undef
   import("/Users/hui_zhou/Project/3Dmol.js/build/3Dmol-min").then(($3Dmol) => {
     const viewer = $3Dmol.createViewer(element, config);
-    let m = viewer.addModel(fileContent.value, "cif"); // 需要去掉 Selective 行
-    viewer.addUnitCell(m);
+    console.log("structureFileContent in display", props.structureFileContent);
+    let m = viewer.addModel(props.structureFileContent, "vasp"); // 需要去掉 Selective 行
+    viewer.addUnitCell(m, { alabel: 'A', blabel: 'B', clabel: 'C', astyle: { color: 'red', radius: 0.2, midpos: -1 }, bstyle: { color: 'green', radius: 0.2, midpos: -1 }, cstyle: { color: 'blue', radius: 0.2, midpos: -1 } });
     viewer.setStyle({}, defaultStyle);
 
     viewer.setHoverable(

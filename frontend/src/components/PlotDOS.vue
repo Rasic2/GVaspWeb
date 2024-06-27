@@ -362,6 +362,9 @@ const handleViewerCreated = (index, viewer) => {
  */
 const handleFileLists = (index, file) => {
   console.log("handleFileLists: file", file);
+  if (file['fileContent']) {
+    structureFileContent.value = file['fileContent'];
+  }
   uploadItems.value[index].fileLists.push(file);
   console.log("handleFileLists: fileLists", uploadItems.value);
 };
@@ -376,6 +379,9 @@ const handleFileLists = (index, file) => {
 const updateFileLists = (index, files) => {
   console.log("updateFileLists: files", files);
   uploadItems.value[index].fileLists = files;
+  if (fileCount.value < 2) {
+    items.value = []
+  }
 };
 
 /**
