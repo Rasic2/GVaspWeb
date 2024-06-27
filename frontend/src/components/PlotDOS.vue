@@ -248,6 +248,7 @@ const plot = async () => {
     contcarPath: contcarPath,
     doscarPath: doscarPath,
     checkedTDOS: checkedTDOS.value,
+    atoms: items.value.map((item) => Object({ radio: item.radio, input: item.input, orbitals: item.orbitals }))
   };
   console.log(params);
   let dosEchart = echarts.init(document.getElementById("dosEchart"));
@@ -260,7 +261,6 @@ const plot = async () => {
     });
     if (res1.status == 200) {
       dosEchart.hideLoading();
-
       /** @type EChartsOption */
       var dosOption = {
         tooltip: {
@@ -305,36 +305,7 @@ const plot = async () => {
             type: "inside",
           },
         ],
-        series: [
-          {
-            name: "Total-DOS-Up",
-            type: "line",
-            data: res1.data["total_dos"][0],
-            lineStyle: {
-              color: '#ed0345',
-            },
-            itemStyle: {
-              color: '#ed0345',
-            },
-            label: {
-              show: false,
-            },
-          },
-          {
-            name: "Total-DOS-Down",
-            data: res1.data["total_dos"][1],
-            type: "line",
-            lineStyle: {
-              color: '#ed0345',
-            },
-            itemStyle: {
-              color: '#ed0345',
-            },
-            label: {
-              show: false,
-            },
-          },
-        ],
+        series: res1.data.series,
       };
       dosEchart.setOption(dosOption);
     }

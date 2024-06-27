@@ -57,7 +57,7 @@ const display = () => {
       function (atom, viewer1) {
         if (!atom.label) {
           atom.label = viewer1.addLabel(
-            atom.elem +
+            atom.elem + `${atom.index + 1}` +
             ` (${atom.x.toFixed(2)}, ${atom.y.toFixed(2)}, ${atom.z.toFixed(
               2
             )})`,

@@ -101,16 +101,34 @@ def plot_ep():
 @cross_origin(origins="*")
 def plot_dos():
     params = request.get_json()
+    multi_atoms = [list(map(lambda x: int(x), atom['input'].split(','), )) for atom in params['atoms']]
+    orbitals = [atom['orbitals'] for atom in params['atoms']]
+    multi_orbitals = [None for item in orbitals if not len(item)]
     dos_data = DOSData(dos_file=params['doscarPath'], pos_file=params['contcarPath'])
-    x_data = dos_data.total_dos.index.values
-    y_up_data = dos_data.total_dos['tot_up'].values
-    y_down_data = dos_data.total_dos['tot_down'].values
-    total_dos = [[[x, y] for x, y in zip(x_data, y_up_data)], [[x, y] for x, y in zip(x_data, y_down_data)]]
-    data = {
-        "total_dos": total_dos
-    }
 
-    return data
+    default_style = {'lineStyle': {'color': '#ed0345'},
+                     'itemStyle': {'color': '#ed0345'},
+                     'type': 'line',
+                     'label': {'show': False}}
+    data = []
+    for index, (atoms, orbitals) in enumerate(zip(multi_atoms, multi_orbitals)):
+        inner_data = dos_data.get_data(atoms=atoms, orbitals=orbitals)
+        up_dict = {'name': f'L{index + 1}_up', 'data': [[x, y] for x, y in zip(inner_data.energy, inner_data.up)]}
+        down_dict = {'name': f'L{index + 1}_down', 'data': [[x, y] for x, y in zip(inner_data.energy, inner_data.down)]}
+        data.append({**default_style, **up_dict})
+        data.append({**default_style, **down_dict})
+
+    if params['checkedTDOS']:
+        x_data = dos_data.total_dos.index.values
+        y_up_data = dos_data.total_dos['tot_up'].values
+        y_down_data = dos_data.total_dos['tot_down'].values
+        total_dos = [[[x, y] for x, y in zip(x_data, y_up_data)], [[x, y] for x, y in zip(x_data, y_down_data)]]
+        tup_dict = {'name': 'TDOS_up', 'data': total_dos[0]}
+        tdown_dict = {'name': 'TDOS_down', 'data': total_dos[1]}
+        data.append({**default_style, **tup_dict})
+        data.append({**default_style, **tdown_dict})
+
+    return {"series": data}
 
 
 if __name__ == '__main__':
