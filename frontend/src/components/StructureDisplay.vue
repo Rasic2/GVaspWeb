@@ -51,6 +51,47 @@ const display = () => {
     viewer.addUnitCell(m, { alabel: 'A', blabel: 'B', clabel: 'C', astyle: { color: 'red', radius: 0.2, midpos: -1 }, bstyle: { color: 'green', radius: 0.2, midpos: -1 }, cstyle: { color: 'blue', radius: 0.2, midpos: -1 } });
     viewer.setStyle({}, defaultStyle);
 
+    const handleMouseClick = (event) => {
+      if (event.altKey && event.button === 0) { // Alt + 左键点击
+        const x = viewer.getX(event);
+        const y = viewer.getY(event);
+        const mouse = viewer.mouseXY(x, y)
+
+        // 使用 targetedObjects 方法获取点击位置的原子
+        const intersects = viewer.targetedObjects(mouse.x, mouse.y, viewer.selectedAtoms({}));
+        if (intersects.length) {
+          let selectedAtom = intersects[0].clickable
+          let element = selectedAtom.elem
+          console.log(element)
+          let atomIndexes = viewer.selectedAtoms({}).filter((atom) => atom.elem === element).map((atom) => atom.index + 1)
+          viewer.setStyle({ index: atomIndexes }, newStyle)
+          atomIndexes.forEach((index) => { addAtoms(index) })
+          viewer.render();
+          console.log("atoms after add", atoms.value)
+          // updateItemsInput(atoms.value.join(","), props.sIndex)
+        }
+
+
+        // viewer.handleClick(event, {}, (atom) => {
+        //   if (!atom) return;
+        //   const element = atom.elem;
+        //   if (selectedElement === element) {
+        //     // 取消选择
+        //     viewer.setStyle({ elem: element }, { stick: {} });
+        //     selectedElement = null;
+        //   } else {
+        //     // 选择所有对应元素
+        //     viewer.setStyle({ elem: element }, { stick: { colorscheme: 'greenCarbon' } });
+        //     selectedElement = element;
+        //   }
+        //   viewer.render();
+        // })
+
+
+      }
+    }
+    // 添加鼠标点击事件监听器
+    window.addEventListener('click', handleMouseClick);
 
     /**
      * Handles keydown events and performs specific actions based on the pressed key.
@@ -66,10 +107,6 @@ const display = () => {
           break;
         case 'z':
           viewer.zoomTo();
-          viewer.render();
-          break;
-        case 'c':
-          viewer.setStyle({}, { cartoon: {} });
           viewer.render();
           break;
         // Add more cases here for additional shortcuts
