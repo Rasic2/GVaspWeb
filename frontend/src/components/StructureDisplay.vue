@@ -61,33 +61,29 @@ const display = () => {
         const intersects = viewer.targetedObjects(mouse.x, mouse.y, viewer.selectedAtoms({}));
         if (intersects.length) {
           let selectedAtom = intersects[0].clickable
-          let element = selectedAtom.elem
-          console.log(element)
-          let atomIndexes = viewer.selectedAtoms({}).filter((atom) => atom.elem === element).map((atom) => atom.index + 1)
-          viewer.setStyle({ index: atomIndexes }, newStyle)
-          atomIndexes.forEach((index) => { addAtoms(index) })
-          viewer.render();
-          console.log("atoms after add", atoms.value)
-          // updateItemsInput(atoms.value.join(","), props.sIndex)
+          let selectedAtomElement = selectedAtom.elem
+          let selectedAtomIndex = selectedAtom.index + 1
+          let atomIndexes = []
+          for (let index in viewer.selectedAtoms({})) {
+            if (viewer.selectedAtoms({})[index].elem === selectedAtomElement) {
+              atomIndexes.push(Number(index) + 1)
+            }
+          }
+          console.log(atomIndexes)
+          if (atoms.value.includes(selectedAtomIndex)) {
+            viewer.setStyle({ index: atomIndexes.map((index) => index - 1) }, newStyle)
+            atomIndexes.forEach((index) => { addAtoms(index) })
+            viewer.render();
+            console.log("atoms after add", atoms.value)
+            updateItemsInput(atoms.value.join(","), props.sIndex)
+          } else {
+            viewer.setStyle({ index: atomIndexes.map((index) => index - 1) }, defaultStyle)
+            atomIndexes.forEach((index) => { removeAtoms(index) })
+            viewer.render();
+            console.log("atoms after add", atoms.value)
+            updateItemsInput(atoms.value.join(","), props.sIndex)
+          }
         }
-
-
-        // viewer.handleClick(event, {}, (atom) => {
-        //   if (!atom) return;
-        //   const element = atom.elem;
-        //   if (selectedElement === element) {
-        //     // 取消选择
-        //     viewer.setStyle({ elem: element }, { stick: {} });
-        //     selectedElement = null;
-        //   } else {
-        //     // 选择所有对应元素
-        //     viewer.setStyle({ elem: element }, { stick: { colorscheme: 'greenCarbon' } });
-        //     selectedElement = element;
-        //   }
-        //   viewer.render();
-        // })
-
-
       }
     }
     // 添加鼠标点击事件监听器

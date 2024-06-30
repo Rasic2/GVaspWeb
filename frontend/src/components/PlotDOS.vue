@@ -90,8 +90,19 @@ provide("newStyle", newStyle);
 
 const atoms = ref([]);
 provide("atoms", atoms);
+
+/**
+ * Provide a function to add atoms to the atoms array.
+ *
+ * @param {string|number} newValue - The new atom value to add.
+ * @return {void}
+ */
 provide("addAtoms", (newValue) => {
-  atoms.value.push(newValue);
+  // Check if newValue exists in atoms array
+  // If newValue does not exist, add newValue to atoms array
+  if (!atoms.value.includes(Number(newValue))) {
+    atoms.value.push(Number(newValue));
+  }
 });
 provide("removeAtoms", (atomItem) => {
   atoms.value = atoms.value.filter((item) => item !== atomItem);
