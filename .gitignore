@@ -9,3 +9,4 @@ EIGENVAL
 *.db
 uploads
 /backend/plot.json
+/backend/static/

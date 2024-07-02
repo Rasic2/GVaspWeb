@@ -2,12 +2,12 @@ import os
 import sqlite3
 import uuid
 
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from flask_cors import cross_origin, CORS
 from gvasp.common.file import OUTCAR, LOCPOT, CONTCAR
 from gvasp.common.plot import DOSData
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static")
 CORS(app)
 
 UPLOAD_FOLDER = 'uploads'
@@ -25,6 +25,16 @@ c.execute('''CREATE TABLE IF NOT EXISTS files
              (id INTEGER PRIMARY KEY, original_filename TEXT, new_filename TEXT)''')
 conn.commit()
 conn.close()
+
+
+@app.route("/")
+def serve_index():
+    return send_from_directory(app.static_folder, 'index.html')
+
+
+@app.route("/<path:path>")
+def serve_static(path):
+    return send_from_directory(app.static_folder, path)
 
 
 @app.route('/api/upload', methods=['POST'])
