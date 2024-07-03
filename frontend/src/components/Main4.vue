@@ -66,7 +66,7 @@ O  O7  1  0.58959600  0.67632100  0.25000000  1
       let element = $('#displayMol');
       let config = {backgroundColor: 'white'};
 // eslint-disable-next-line no-undef
-      import("/Users/hui_zhou/Project/3Dmol.js/build/3Dmol-min").then(($3Dmol) => {
+      import("../../../../3Dmol.js/build/3Dmol-min").then(($3Dmol) => {
         const viewer1 = $3Dmol.createViewer(element, config);
         let m = viewer1.addModel(xyzContent.value, "cif"); // 需要去掉 Selective 行
         viewer1.addUnitCell(m);

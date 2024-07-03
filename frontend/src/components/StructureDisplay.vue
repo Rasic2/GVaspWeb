@@ -44,7 +44,7 @@ const display = () => {
   const newStyle = inject("newStyle");
   const defaultStyle = inject("defaultStyle");
   // eslint-disable-next-line no-undef
-  import("/Users/hui_zhou/Project/3Dmol.js/build/3Dmol-min").then(($3Dmol) => {
+  import("../../../../3Dmol.js/build/3Dmol-min").then(($3Dmol) => {
     const viewer = $3Dmol.createViewer(element, config);
     console.log("structureFileContent in display", props.structureFileContent);
     let m = viewer.addModel(props.structureFileContent, "vasp"); // 需要去掉 Selective 行

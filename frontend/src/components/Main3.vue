@@ -45,7 +45,7 @@ let items=ref([])
       let element = $('#displayMol');
       let config = {backgroundColor: 'white'};
       // eslint-disable-next-line no-undef
-      import("/Users/hui_zhou/Project/3Dmol.js/build/3Dmol-min").then(($3Dmol)=>{
+      import("../../../../3Dmol.js/build/3Dmol-min").then(($3Dmol)=>{
         const viewer1 = $3Dmol.createViewer(element, config);
         let m = viewer1.addModel(xyzContent.value, "vasp");
         viewer1.addUnitCell(m);
