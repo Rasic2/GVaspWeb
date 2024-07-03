@@ -1,16 +1,7 @@
 <template>
-  <el-upload
-    v-model:file-list="waitFileList"
-    class="upload"
-    :on-change="onUpload"
-    multiple
-    :auto-upload="false"
-    :on-preview="handlePreview"
-    :on-remove="handleRemove"
-    :before-remove="beforeRemove"
-    :limit="limitNum"
-    :on-exceed="handleExceed"
-  >
+  <el-upload v-model:file-list="waitFileList" class="upload" :on-change="onUpload" multiple :auto-upload="false"
+    :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="limitNum"
+    :on-exceed="handleExceed">
     <el-button type="primary" :disabled="isDisabled">上传文件</el-button>
   </el-upload>
 </template>
@@ -81,49 +72,36 @@ const onUpload = async (file, fileList) => {
   console.log("onUpload: fileList", fileList);
   let rawFile = file.raw;
   formData.append("file", file.raw);
-  if (
-    (rawFile.type == "image/jpeg" && rawFile.size / 1024 / 1024 > 10) ||
-    (rawFile.type == "image/png" && rawFile.size / 1024 / 1024 > 10) ||
-    (rawFile.type == "image/jpg" && rawFile.size / 1024 / 1024 > 10)
-  ) {
-    ElMessage.error("图片大小不能超过10MB!");
-    fileList.splice(-1, 1); //移除当前超出大小的文件
-    return false;
-  } else if (rawFile.size / 1024 / 1024 > 20) {
-    ElMessage.error("文件大小不能超过20MB!");
-    fileList.splice(-1, 1); //移除当前超出大小的文件
-    return false;
-  } else {
-    console.log("上传");
-    const loadingInstance = ElLoading.service({
-      text: "正在上传",
-      background: "rgba(0,0,0,.2)",
-    });
+  console.log("上传");
 
-    try {
-      const res = await axios.post(
-        "/api/upload",
-        formData,
-        {
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-          },
-        }
-      );
-      if (res.status == 200) {
-        loadingInstance.close();
-        console.log(res);
-        const obj = res.data;
-        console.log(props.index);
-        emits("uploadSuccess", props.index, obj);
+  const loadingInstance = ElLoading.service({
+    text: "正在上传",
+    background: "rgba(0,0,0,.2)",
+  });
+  try {
+    const res = await axios.post(
+      "/api/upload",
+      formData,
+      {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        },
       }
-    } catch (error) {
-      fileList.splice(-1, 1); //移除当前超出大小的文件
+    );
+    if (res.status == 200) {
       loadingInstance.close();
-      console.log(error);
-      ElMessage.warning(`图片上传失败`);
+      console.log(res);
+      const obj = res.data;
+      console.log(props.index);
+      emits("uploadSuccess", props.index, obj);
     }
+  } catch (error) {
+    fileList.splice(-1, 1); //移除当前超出大小的文件
+    loadingInstance.close();
+    console.log(error);
+    ElMessage.warning(`文件上传失败`);
   }
+
   return true;
 };
 
@@ -159,8 +137,7 @@ const handlePreview = (uploadFile) => {
  */
 const handleExceed = (files, uploadFiles) => {
   ElMessage.warning(
-    `The limit is ${props.limitNum}, you selected ${
-      files.length
+    `The limit is ${props.limitNum}, you selected ${files.length
     } files this time, add up to ${files.length + uploadFiles.length} totally`
   );
 };
