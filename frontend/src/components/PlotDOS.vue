@@ -204,6 +204,7 @@ const addItem = () => {
  * @return {void} This function does not return anything.
  */
 const removeItem = (index) => {
+  viewerSelectedAtoms.value.splice(index, 1)
   items.value.splice(index, 1);
 };
 

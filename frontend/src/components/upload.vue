@@ -3,6 +3,9 @@
     :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="limitNum"
     :on-exceed="handleExceed">
     <el-button type="primary" :disabled="isDisabled">上传文件</el-button>
+    <template #tip>
+      <div class="el-upload__tip">选择文件上传</div>
+    </template>
   </el-upload>
 </template>
 

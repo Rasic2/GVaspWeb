@@ -82,10 +82,11 @@ def upload_file():
         return '请求方法不允许'
 
 
-@app.route('/api/getdata', methods=['GET'])
+@app.route('/api/get_opt_data', methods=['POST'])
 @cross_origin(origins="*")
 def plot_opt():
-    outcar = OUTCAR(name="OUTCAR")
+    params = request.get_json()
+    outcar = OUTCAR(name=params['outcarPath'])
     energy = [[step + 1, e] for step, e in enumerate(outcar.energy)]
     force = [[step + 1, f] for step, f in enumerate(outcar.force)]
     data = {
