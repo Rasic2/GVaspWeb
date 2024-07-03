@@ -265,7 +265,7 @@ const plot = async () => {
   dosEchart.clear();
   dosEchart.showLoading({ maskColor: "rgba(3,3,8,0.5)", textColor: "#fff600" });
   try {
-    const res1 = await axios.post("http://127.0.0.1:5000/api/get_dos_data", params, {
+    const res1 = await axios.post("/api/get_dos_data", params, {
       headers: {
         "Access-Control-Allow-Origin": "*",
       },

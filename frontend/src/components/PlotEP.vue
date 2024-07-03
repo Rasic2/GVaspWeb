@@ -21,7 +21,7 @@ export default {
                 textColor: '#fff600'
             });
 
-            this.$axios.get("http://127.0.0.1:5000/api/get_ep_data", {
+            this.$axios.get("/api/get_ep_data", {
                 headers: {
                     "Access-Control-Allow-Origin": "*"
                 }
