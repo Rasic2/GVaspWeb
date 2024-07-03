@@ -8,9 +8,9 @@
 import { defineProps, defineEmits, onMounted, inject } from "vue";
 import $ from "jquery";
 
-const atoms = inject("atoms");
-const addAtoms = inject("addAtoms");
-const removeAtoms = inject("removeAtoms");
+const viewerSelectedAtoms = inject("viewerSelectedAtoms");
+const addViewerSelectedAtoms = inject("addViewerSelectedAtoms");
+const removeViewerSelectedAtoms = inject("removeViewerSelectedAtoms");
 
 // const items = inject("items")
 const updateItemsInput = inject("updateItemsInput")
@@ -70,18 +70,18 @@ const display = () => {
             }
           }
           console.log(atomIndexes)
-          if (atoms.value.includes(selectedAtomIndex)) {
+          if (viewerSelectedAtoms.value[props.sIndex].includes(selectedAtomIndex)) {
             viewer.setStyle({ index: atomIndexes.map((index) => index - 1) }, newStyle)
-            atomIndexes.forEach((index) => { addAtoms(index) })
+            atomIndexes.forEach((index) => { addViewerSelectedAtoms(index, props.sIndex) })
             viewer.render();
-            console.log("atoms after add", atoms.value)
-            updateItemsInput(atoms.value.join(","), props.sIndex)
+            console.log("atoms after add", viewerSelectedAtoms.value, props.sIndex)
+            updateItemsInput(viewerSelectedAtoms.value[props.sIndex].join(","), props.sIndex)
           } else {
             viewer.setStyle({ index: atomIndexes.map((index) => index - 1) }, defaultStyle)
-            atomIndexes.forEach((index) => { removeAtoms(index) })
+            atomIndexes.forEach((index) => { removeViewerSelectedAtoms(index, props.sIndex) })
             viewer.render();
-            console.log("atoms after add", atoms.value)
-            updateItemsInput(atoms.value.join(","), props.sIndex)
+            console.log("atoms after add", viewerSelectedAtoms.value, props.Index)
+            updateItemsInput(viewerSelectedAtoms.value[props.sIndex].join(","), props.sIndex)
           }
         }
       }
@@ -139,17 +139,17 @@ const display = () => {
     );
     viewer.setClickable({}, true, function (atom, viewer1) {
       let atomItem = atom.index + 1;
-      if (!atoms.value.includes(atomItem)) {
+      if (!viewerSelectedAtoms.value[props.sIndex].includes(atomItem)) {
         viewer1.setStyle({ index: atom.index }, newStyle);
-        addAtoms(atom.index + 1);
-        console.log("atoms after add", atoms.value)
+        addViewerSelectedAtoms(atom.index + 1, props.sIndex);
+        console.log("atoms after add", viewerSelectedAtoms.value)
         viewer1.render();
-        updateItemsInput(atoms.value.join(","), props.sIndex)
+        updateItemsInput(viewerSelectedAtoms.value[props.sIndex].join(","), props.sIndex)
       } else {
         viewer1.setStyle({ index: atom.index }, defaultStyle);
-        removeAtoms(atomItem);
-        console.log("atoms after remove", atoms.value)
-        updateItemsInput(atoms.value.join(","), props.sIndex)
+        removeViewerSelectedAtoms(atomItem, props.sIndex);
+        console.log("atoms after remove", viewerSelectedAtoms.value)
+        updateItemsInput(viewerSelectedAtoms.value[props.sIndex].join(","), props.sIndex)
         viewer1.render();
       }
     });

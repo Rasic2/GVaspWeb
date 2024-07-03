@@ -80,7 +80,7 @@ const onUpload = async (file, fileList) => {
   });
   try {
     const res = await axios.post(
-      "/api/upload",
+      "http://127.0.0.1:5001/api/upload",
       formData,
       {
         headers: {

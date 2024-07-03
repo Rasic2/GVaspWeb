@@ -88,8 +88,8 @@ const newStyle = {
 provide("defaultStyle", defaultStyle);
 provide("newStyle", newStyle);
 
-const atoms = ref([]);
-provide("atoms", atoms);
+const viewerSelectedAtoms = ref([]);
+provide("viewerSelectedAtoms", viewerSelectedAtoms);
 
 /**
  * Provide a function to add atoms to the atoms array.
@@ -97,15 +97,15 @@ provide("atoms", atoms);
  * @param {string|number} newValue - The new atom value to add.
  * @return {void}
  */
-provide("addAtoms", (newValue) => {
+provide("addViewerSelectedAtoms", (newValue, index) => {
   // Check if newValue exists in atoms array
   // If newValue does not exist, add newValue to atoms array
-  if (!atoms.value.includes(Number(newValue))) {
-    atoms.value.push(Number(newValue));
+  if (!viewerSelectedAtoms.value[index].includes(Number(newValue))) {
+    viewerSelectedAtoms.value[index].push(Number(newValue));
   }
 });
-provide("removeAtoms", (atomItem) => {
-  atoms.value = atoms.value.filter((item) => item !== atomItem);
+provide("removeViewerSelectedAtoms", (atomItem, index) => {
+  viewerSelectedAtoms.value[index] = viewerSelectedAtoms.value[index].filter((item) => item !== atomItem);
 });
 
 const items = ref([]);
@@ -187,6 +187,7 @@ const plotDisabled = computed(() => {
  * @return {void} This function does not return anything.
  */
 const addItem = () => {
+  viewerSelectedAtoms.value.push([])
   items.value.push({
     radio: "1",
     display: "none",
@@ -236,15 +237,15 @@ const inputAtom = (index) => {
   const inputAtomIndex = parseInt(items.value[index]["input"], 10);
   let viewer = items.value[index]["structure"];
   viewer.setStyle({}, defaultStyle);
-  atoms.value = [];
+  viewerSelectedAtoms.value[index] = [];
   if (inputAtomIndex) {
-    viewer.setStyle({ index: inputAtomIndex }, newStyle);
-    atoms.value.push(inputAtomIndex);
+    viewer.setStyle({ index: inputAtomIndex - 1 }, newStyle);
+    viewerSelectedAtoms.value[index].push(inputAtomIndex);
     viewer.render();
   } else {
     viewer.render();
   }
-  console.log(atoms.value);
+  console.log(viewerSelectedAtoms.value);
 };
 
 /**
