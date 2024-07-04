@@ -1,8 +1,8 @@
 <template>
   <div class="Echarts">
     <div class="upload_plot">
-      <file-upload class="upload" :index="index" :limitNum="1" :type="4" :fileList="uploadItem.fileLists"
-        @uploadSuccess="handleFileLists" @updateFile="updateFileLists"></file-upload>
+      <file-upload class="upload" :index="index" :limitNum="1" :type="4" :uploadTip="'请上传 LOCPOT 文件'"
+        :fileList="uploadItem.fileLists" @uploadSuccess="handleFileLists" @updateFile="updateFileLists"></file-upload>
       <el-button class="expand_btn" @click="plot" :disabled="plotDisabled">绘制</el-button>
     </div>
     <div id="epEchart"></div>

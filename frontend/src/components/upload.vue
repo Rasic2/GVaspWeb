@@ -4,7 +4,7 @@
     :on-exceed="handleExceed">
     <el-button type="primary" :disabled="isDisabled">上传文件</el-button>
     <template #tip>
-      <div class="el-upload__tip">选择文件上传</div>
+      <div class="el-upload__tip">{{ uploadTip }}</div>
     </template>
   </el-upload>
 </template>
@@ -39,6 +39,10 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  uploadTip: {
+    type: String,
+    default: ''
+  }
 });
 
 let waitFileList = ref([]);
