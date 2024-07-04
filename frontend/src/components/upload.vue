@@ -86,8 +86,9 @@ const onUpload = async (file, fileList) => {
     background: "rgba(0,0,0,.2)",
   });
   try {
+    const apiUrl = process.env.VUE_APP_API_URL || '';
     const res = await axios.post(
-      "http://127.0.0.1:5001/api/upload",
+      apiUrl + "/api/upload",
       formData,
       {
         headers: {

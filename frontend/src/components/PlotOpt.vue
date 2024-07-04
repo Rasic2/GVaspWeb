@@ -57,7 +57,8 @@ const plot = async () => {
   optEchart.clear();
   optEchart.showLoading({ maskColor: "rgba(3,3,8,0.5)", textColor: "#fff600" });
   try {
-    const res = await axios.post("http://127.0.0.1:5001/api/get_opt_data", params, {
+    const apiUrl = process.env.VUE_APP_API_URL || '';
+    const res = await axios.post(apiUrl + "/api/get_opt_data", params, {
       headers: {
         "Access-Control-Allow-Origin": "*",
       },

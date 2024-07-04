@@ -10,3 +10,4 @@ EIGENVAL
 uploads
 /backend/plot.json
 /backend/static/
+*.env
