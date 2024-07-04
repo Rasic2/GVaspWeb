@@ -97,10 +97,11 @@ def plot_opt():
     return data
 
 
-@app.route('/api/get_ep_data', methods=['GET'])
+@app.route('/api/get_ep_data', methods=['POST'])
 @cross_origin(origins="*")
 def plot_ep():
-    locpot = [[x, l] for x, l in zip(*LOCPOT(name="LOCPOT").line_potential(direction='z'))]
+    params = request.get_json()
+    locpot = [[x, l] for x, l in zip(*LOCPOT(name=params['locpotPath']).line_potential(direction='z'))]
     data = {
         "locpot": locpot
     }
