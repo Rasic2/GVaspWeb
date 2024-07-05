@@ -4,7 +4,7 @@ import time
 from hashlib import md5
 from pathlib import Path
 
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from flask_cors import cross_origin, CORS
 from gvasp.common.file import OUTCAR, LOCPOT, CONTCAR
 from gvasp.common.plot import DOSData
