@@ -43,15 +43,14 @@ def upload_file():
     if request.method == 'POST':
         if 'file' not in request.files:
             return 'No file part'
-        files = request.files.getlist('file')
+        file = request.files['file']
         conn = sqlite3.connect('file_mapping.db')
         c = conn.cursor()
-        file = files[0]
 
-        if file.filename == '':
+        if request.form['filename'] == '':
             return '没有选择文件'
         try:
-            original_filename = file.filename
+            original_filename = request.form['filename']
             # 查询数据库，检查文件名是否已经存在
             c.execute("SELECT * FROM files WHERE original_filename=?", (original_filename,))
             existing_file = c.fetchone()

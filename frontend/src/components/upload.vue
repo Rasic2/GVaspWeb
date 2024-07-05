@@ -56,7 +56,7 @@ watch(
 );
 
 const emits = defineEmits(["uploadSuccess", "updateFile"]);
-const formData = new FormData();
+const CHUNK_SIZE = 1 * 1024 * 1024;
 
 /**
  * Returns a computed property that indicates whether the file input should be disabled.
@@ -77,39 +77,51 @@ const isDisabled = computed(() => {
  */
 const onUpload = async (file, fileList) => {
   console.log("onUpload: fileList", fileList);
-  let rawFile = file.raw;
-  formData.append("file", file.raw);
-  console.log("上传");
-
   const loadingInstance = ElLoading.service({
     text: "正在上传",
     background: "rgba(0,0,0,.2)",
   });
-  try {
-    const apiUrl = process.env.VUE_APP_API_URL || '';
-    const res = await axios.post(
-      apiUrl + "/api/upload",
-      formData,
-      {
+
+  const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+  let start = 0;
+  let end = CHUNK_SIZE;
+  let chunkIndex = 0;
+  while (start < file.size) {
+    const chunk = file.raw.slice(start, end);
+    const formData = new FormData();
+    formData.append('file', chunk);
+    formData.append('filename', file.name);
+    formData.append('chunkIndex', chunkIndex);
+    formData.append('totalChunks', totalChunks);
+
+    try {
+      const apiUrl = process.env.VUE_APP_API_URL || '';
+      const res = await axios.post(apiUrl + '/api/upload', formData, {
         headers: {
           "Access-Control-Allow-Origin": "*",
-        },
+          'Content-Type': 'multipart/form-data',
+        }
+      });
+      if (res.status == 200) {
+        console.log(`Chunk uploaded ${chunkIndex + 1}/${totalChunks} successfully:`, res);
+        if (chunkIndex + 1 == totalChunks) {
+          emits("uploadSuccess", props.index, res.data)
+        }
       }
-    );
-    if (res.status == 200) {
+    } catch (error) {
+      fileList.splice(-1, 1); //移除当前超出大小的文件
       loadingInstance.close();
-      console.log(res);
-      const obj = res.data;
-      console.log(props.index);
-      emits("uploadSuccess", props.index, obj);
+      console.log(error);
+      ElMessage.warning(`文件上传失败`);
+      return;
     }
-  } catch (error) {
-    fileList.splice(-1, 1); //移除当前超出大小的文件
-    loadingInstance.close();
-    console.log(error);
-    ElMessage.warning(`文件上传失败`);
+    start = end;
+    end = start + CHUNK_SIZE;
+    chunkIndex += 1;
   }
 
+  loadingInstance.close();
+  console.log(props.index, 'File uploaded successfully');
   return true;
 };
 
