@@ -1,4 +1,6 @@
 import os
+import shutil
+import time
 from hashlib import md5
 from pathlib import Path
 
@@ -16,6 +18,23 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # 创建保存文件的目录
 UploadPath = Path(UPLOAD_FOLDER)
 UploadPath.mkdir(exist_ok=True)
+
+# 获取当前时间
+now = time.time()
+
+# 遍历uploads目录下的文件和子目录
+for file_path in UploadPath.iterdir():
+    # 检查文件的最后修改时间
+    file_mtime = file_path.stat().st_mtime
+
+    # 如果文件超过一天（24小时没有修改），则删除
+    if now - file_mtime > 24 * 60 * 60:
+        if file_path.is_file():
+            file_path.unlink()
+            print(f"Deleted file {file_path}")
+        elif file_path.is_dir():
+            shutil.rmtree(file_path)
+            print(f"Deleted directory {file_path}")
 
 
 # @app.route("/")
