@@ -1,13 +1,13 @@
 <template>
-    <a>
-        Hello
-    </a>
+  <a>
+    Hello
+  </a>
 </template>
-  
+
 
 <script>
 export default {
-    name: "MyHome"
+  name: "MyHome"
 }
 </script>
 

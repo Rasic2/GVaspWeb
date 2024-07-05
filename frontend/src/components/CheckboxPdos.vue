@@ -1,24 +1,10 @@
 <template>
   <div class="checkboxPDOS">
-    <el-checkbox
-      class="selectAll"
-      v-model="checkAll"
-      :indeterminate="isIndeterminate"
-      @change="handleCheckAllChange"
-    >
+    <el-checkbox class="selectAll" v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">
       {{ lOrbital }}
     </el-checkbox>
-    <el-checkbox-group
-      v-model="checkedOrbitals"
-      @change="handleCheckedOrbitalsChange"
-    >
-      <el-checkbox
-        class="selectSingle"
-        v-for="orbital in orbitals"
-        :key="orbital"
-        :label="orbital"
-        :value="orbital"
-      >
+    <el-checkbox-group v-model="checkedOrbitals" @change="handleCheckedOrbitalsChange">
+      <el-checkbox class="selectSingle" v-for="orbital in orbitals" :key="orbital" :label="orbital" :value="orbital">
         {{ orbital.value }}
       </el-checkbox>
     </el-checkbox-group>

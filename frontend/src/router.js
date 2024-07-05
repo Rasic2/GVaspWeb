@@ -21,14 +21,6 @@ const routes = [
         component: () => import("./components/PlotEP.vue"),
       },
       {
-        path: "/index/structure",
-        component: () => import("./components/Main3.vue"),
-      },
-      {
-        path: "/index/menu4",
-        component: () => import("./components/Main4.vue"),
-      },
-      {
         path: "/index/plot_dos",
         component: () => import("./components/PlotDOS.vue"),
       },
