@@ -117,7 +117,7 @@ def plot_dos():
     params = request.get_json()
     multi_atoms = [list(map(lambda x: int(x), atom['input'].split(','), )) for atom in params['atoms']]
     orbitals = [atom['orbitals'] for atom in params['atoms']]
-    multi_orbitals = [None for item in orbitals if not len(item)]
+    multi_orbitals = list(map(lambda x: None if not len(x) else x, orbitals))
     dos_data = DOSData(dos_file=params['doscarPath'], pos_file=params['contcarPath'], magnification=1)
 
     default_style = {'type': 'line',
