@@ -24,6 +24,10 @@ const routes = [
         path: "/index/plot_dos",
         component: () => import("./components/PlotDOS.vue"),
       },
+      {
+        path: "/index/plot_pes",
+        component: () => import("./components/PlotPES.vue"),
+      },
     ],
   },
 ];

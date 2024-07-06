@@ -7,13 +7,16 @@ from pathlib import Path
 from flask import Flask, request, send_from_directory
 from flask_cors import cross_origin, CORS
 from gvasp.common.file import OUTCAR, LOCPOT, CONTCAR
-from gvasp.common.plot import DOSData
+from gvasp.common.plot import DOSData, PESData
 
 app = Flask(__name__, static_folder="static")
 CORS(app)
 
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+colors = ['#01545a', '#ed0345', '#ef6932', '#710162', '#017351', '#03c383', '#aad962', '#fbbf45',
+          '#a12a5e', '#047df6', '#FFFF33', 'FF2CF2', '#F1D1E1', '#E6FFE7']
 
 # 创建保存文件的目录
 UploadPath = Path(UPLOAD_FOLDER)
@@ -123,8 +126,6 @@ def plot_ep():
 @app.route('/api/get_dos_data', methods=['POST'])
 @cross_origin(origins="*")
 def plot_dos():
-    colors = ['#01545a', '#ed0345', '#ef6932', '#710162', '#017351', '#03c383', '#aad962', '#fbbf45',
-              '#a12a5e', '#047df6', '#FFFF33', 'FF2CF2', '#F1D1E1', '#E6FFE7']
     params = request.get_json()
     multi_atoms = [list(map(lambda x: int(x), atom['input'].split(','), )) for atom in params['atoms']]
     orbitals = [atom['orbitals'] for atom in params['atoms']]
@@ -156,6 +157,28 @@ def plot_dos():
         data.append({**default_style, **tdown_dict, **color_dict})
 
     return {"series": data}
+
+
+@app.route('/api/get_pes_data', methods=['POST'])
+@cross_origin(origins="*")
+def plot_pes():
+    defaultDict = {'type': 'line', 'smooth': False, 'encode': {'x': 0, 'y': 1}, 'symbol': 'none'}
+    params = request.get_json()
+    front_data = params['data']
+    server_data = []
+
+    for index, data in enumerate(front_data):
+        pes_data = PESData(data)
+        parse_data = pes_data.convert_sd()
+        solid_line = [[[x[0], y[0]], [x[1], y[1]]] for x, y in zip(parse_data[0], parse_data[1])]
+        dashed_line = [[[x[0], y[0]], [x[1], y[1]]] for x, y in zip(parse_data[2], parse_data[3])]
+        singleSolidRoute = [{**defaultDict, 'name': f'L{index}', 'data': data, 'lineStyle': {'type': 'solid'}, } for
+                            data in solid_line]
+        singleDashedRoute = [{**defaultDict, 'name': f'L{index}', 'data': data, 'lineStyle': {'type': 'dashed'}, } for
+                             data in dashed_line]
+        singleRoute = singleDashedRoute + singleSolidRoute
+        server_data += singleRoute
+    return server_data
 
 
 if __name__ == '__main__':
