@@ -105,12 +105,7 @@ const plot = () => {
         params.forEach((item) => {
           var line = pesOption.series[item.seriesIndex]
           var lineStyle = line.lineStyle
-          if (lineStyle.type == 'solid') {
-            tooltipContent += `<tr>
-                    <td style="text-align: left; padding-right: 10px;">${item.marker}${item.seriesName}(能量)</td>
-                    <td style="text-align: right; font-weight: bold;">${line.data[0][1].toFixed(2)}</td>
-                </tr>`
-          } else {
+          if (lineStyle.type != 'solid') {
             tooltipContent += `<tr>
                     <td style="text-align: left; padding-right: 10px; color: red;">${item.marker}${item.seriesName}(能垒)</td>
                     <td style="text-align: right; font-weight: bold; color: red;">${(line.data[1][1] - line.data[0][1]).toFixed(2)}</td>
@@ -124,6 +119,10 @@ const plot = () => {
     },
     xAxis: {
       type: 'value',
+      name: 'Reaction Coordinates',
+      nameLocation: 'center',
+      nameGap: 15,
+      axisTick: { show: false },
       axisLabel: {
         show: false,
       },

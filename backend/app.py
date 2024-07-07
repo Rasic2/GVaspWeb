@@ -172,8 +172,11 @@ def plot_pes():
         parse_data = pes_data.convert_sd()
         solid_line = [[[x[0], y[0]], [x[1], y[1]]] for x, y in zip(parse_data[0], parse_data[1])]
         dashed_line = [[[x[0], y[0]], [x[1], y[1]]] for x, y in zip(parse_data[2], parse_data[3])]
-        singleSolidRoute = [{**defaultDict, 'name': f'L{index}', 'data': data, 'lineStyle': {'type': 'solid'}, } for
-                            data in solid_line]
+        singleSolidRoute = [{**defaultDict, 'name': f'L{index}', 'data': data, 'lineStyle': {'type': 'solid'},
+                             'markPoint': {'data': [{'coord': [(data[1][0] + data[0][0]) / 2, data[0][1]],
+                                                     'label': {'show': True, 'formatter': f'{data[0][1]}',
+                                                               'position': 'inside'}}]}} for data in
+                            solid_line]
         singleDashedRoute = [{**defaultDict, 'name': f'L{index}', 'data': data, 'lineStyle': {'type': 'dashed'}, } for
                              data in dashed_line]
         singleRoute = singleDashedRoute + singleSolidRoute
