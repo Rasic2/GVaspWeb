@@ -65,7 +65,6 @@ const inputRoute = async (index) => {
   routes.value.forEach((item) => {
     inputs.push(item['input'].split(",").map((item) => parseFloat(item)));
   })
-  console.log(inputs)
   let params = { "data": inputs }
   try {
     const res = await axios.post(apiUrl + "/api/get_pes_data", params, {
@@ -98,23 +97,24 @@ const plot = () => {
         type: 'none' // 移除垂直竖线
       },
       formatter: function (params) {
-        var tooltipContent = '<div style="text-align: left;">';
-        var xAxisValue = parseFloat(params[0].axisValue).toFixed(2);
-        tooltipContent += `<div style="font-weight: bold; margin-bottom: 5px;">${xAxisValue}</div>`;
-        tooltipContent += '<table>';
-        params.forEach((item) => {
-          var line = pesOption.series[item.seriesIndex]
-          var lineStyle = line.lineStyle
-          if (lineStyle.type != 'solid') {
-            tooltipContent += `<tr>
+        let dashedCount = params.filter((item) => pesOption.series[item.seriesIndex].lineStyle.type == 'dashed').length
+        if (dashedCount > 0) {
+          var tooltipContent = '<div style="text-align: left;">';
+          tooltipContent += '<table>';
+          params.forEach((item) => {
+            var line = pesOption.series[item.seriesIndex]
+            var lineStyle = line.lineStyle
+            if (lineStyle.type != 'solid') {
+              tooltipContent += `<tr>
                     <td style="text-align: left; padding-right: 10px; color: red;">${item.marker}${item.seriesName}(能垒)</td>
-                    <td style="text-align: right; font-weight: bold; color: red;">${(line.data[1][1] - line.data[0][1]).toFixed(2)}</td>
+                    <td style="text-align: right; font-weight: bold; color: red;">${(line.data[1][1] - line.data[0][1]).toFixed(2)} eV</td>
                 </tr>`
-          }
-        })
-        tooltipContent += '</table>';
-        tooltipContent += '</div>';
-        return tooltipContent
+            }
+          })
+          tooltipContent += '</table>';
+          tooltipContent += '</div>';
+          return tooltipContent
+        }
       }
     },
     xAxis: {
