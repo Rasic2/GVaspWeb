@@ -4,6 +4,7 @@
       router>
       <el-menu-item index="/index/plot_opt">结构优化</el-menu-item>
       <el-menu-item index="/index/plot_ep">静电势</el-menu-item>
+      <el-menu-item index="/index/plot_band">能带图</el-menu-item>
       <el-menu-item index="/index/plot_dos">态密度</el-menu-item>
       <el-menu-item index="/index/plot_pes">能垒图</el-menu-item>
     </el-menu>

@@ -21,6 +21,10 @@ const routes = [
         component: () => import("./components/PlotEP.vue"),
       },
       {
+        path: "/index/plot_band",
+        component: () => import("./components/PlotBand.vue"),
+      },
+      {
         path: "/index/plot_dos",
         component: () => import("./components/PlotDOS.vue"),
       },

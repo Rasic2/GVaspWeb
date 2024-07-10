@@ -6,7 +6,7 @@ from pathlib import Path
 
 from flask import Flask, request, send_from_directory
 from flask_cors import cross_origin, CORS
-from gvasp.common.file import OUTCAR, LOCPOT, CONTCAR
+from gvasp.common.file import OUTCAR, LOCPOT, CONTCAR, EIGENVAL
 from gvasp.common.plot import DOSData, PESData
 
 app = Flask(__name__, static_folder="static")
@@ -121,6 +121,30 @@ def plot_ep():
     }
 
     return data
+
+
+@app.route('/api/get_band_data', methods=['POST'])
+@cross_origin(origins="*")
+def plot_band():
+    params = request.get_json()
+    default_style = {'type': 'line', 'label': {'show': False}}
+
+    eigenval = EIGENVAL(name=params['eigenvalPath'])
+    energy, kcoord, klabel = eigenval.energy, eigenval.KPoint_dist, eigenval.KPoint_label
+
+    fermi = 0.
+    energy_avg = energy.mean(axis=-1) - fermi
+    data = []
+    for band_index in range(energy_avg.shape[1]):
+        data_dict = {'name': f'B{band_index + 1}', 'data': [[x, y] for x, y in zip(kcoord, energy_avg[:, band_index])]}
+        data.append({**default_style, **data_dict})
+
+    # data = {
+    #     "energy": energy_avg_list,
+    #     "kcoord": kcoord,
+    # }
+
+    return {"series": data}
 
 
 @app.route('/api/get_dos_data', methods=['POST'])
