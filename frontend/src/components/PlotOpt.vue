@@ -5,6 +5,7 @@
         :fileList="uploadItem.fileLists" @uploadSuccess="handleFileLists" @updateFile="updateFileLists"></file-upload>
       <el-button class="expand_btn" @click="plot" :disabled="plotDisabled">绘制</el-button>
     </div>
+    <traj-display></traj-display>
     <div id="optEchart"></div>
   </div>
 </template>
@@ -20,6 +21,7 @@ import { ref, computed } from "vue"
 import axios from "axios";
 import * as echarts from "echarts";
 import FileUpload from "@/components/upload.vue";
+import TrajDisplay from "@/components/TrajDisplay.vue";
 
 // Ref Variable
 const uploadItem = ref({
