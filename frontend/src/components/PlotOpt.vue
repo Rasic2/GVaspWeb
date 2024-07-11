@@ -1,11 +1,10 @@
 <template>
   <div class="Echarts">
     <div class="upload_plot">
-      <file-upload class="upload" :index="index" :limitNum="1" :type="4" :uploadTip="'请上传 OUTCAR 文件'"
+      <file-upload class="upload" :index="index" :limitNum="1" :type="'OUTCAR'" :uploadTip="'请上传 OUTCAR 文件'"
         :fileList="uploadItem.fileLists" @uploadSuccess="handleFileLists" @updateFile="updateFileLists"></file-upload>
       <el-button class="expand_btn" @click="plot" :disabled="plotDisabled">绘制</el-button>
     </div>
-    <traj-display></traj-display>
     <div id="optEchart"></div>
   </div>
 </template>
@@ -21,12 +20,10 @@ import { ref, computed } from "vue"
 import axios from "axios";
 import * as echarts from "echarts";
 import FileUpload from "@/components/upload.vue";
-import TrajDisplay from "@/components/TrajDisplay.vue";
+
 
 // Ref Variable
-const uploadItem = ref({
-  fileLists: [],
-})
+const uploadItem = ref({ fileLists: [] })
 
 // Computed
 
@@ -152,7 +149,7 @@ const plot = async () => {
 const handleFileLists = (index, file) => {
   console.log("handleFileLists: file", file);
   if (file['fileContent']) {
-    console.log(file['fileContent'])
+    console.log("file content", file['fileContent'])
     // structureFileContent.value = file['fileContent'];
   }
   uploadItem.value.fileLists.push(file);

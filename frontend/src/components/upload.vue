@@ -24,8 +24,8 @@ const props = defineProps({
     type: Number,
   },
   type: {
-    default: 1,
-    type: Number,
+    default: '',
+    type: String,
   },
   projectId: {
     default: "",
@@ -90,6 +90,7 @@ const onUpload = async (file, fileList) => {
     const chunk = file.raw.slice(start, end);
     const formData = new FormData();
     formData.append('file', chunk);
+    formData.append('type', props.type);
     formData.append('filename', file.name);
     formData.append('chunkIndex', chunkIndex);
     formData.append('totalChunks', totalChunks);

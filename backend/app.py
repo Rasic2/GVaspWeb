@@ -6,7 +6,7 @@ from pathlib import Path
 
 from flask import Flask, request, send_from_directory
 from flask_cors import cross_origin, CORS
-from gvasp.common.file import OUTCAR, LOCPOT, CONTCAR, EIGENVAL
+from gvasp.common.file import OUTCAR, LOCPOT, CONTCAR, EIGENVAL, XDATCAR
 from gvasp.common.plot import DOSData, PESData
 
 app = Flask(__name__, static_folder="static")
@@ -57,6 +57,7 @@ def upload_file():
         if 'file' not in request.files:
             return 'No file part'
         file = request.files['file']
+        file_type = request.form['type']
         chunk_index = request.form['chunkIndex']
         total_chunks = request.form['totalChunks']
 
@@ -82,12 +83,20 @@ def upload_file():
                             output_file.write(part_file.read())
                         os.remove(UploadPath / f"{new_filename}.{i}")
 
-                try:
+                if file_type == 'CONTCAR':
                     contcar = CONTCAR(file_path)
                     _ = contcar.structure
                     file_content = ''.join(contcar.strings)
-                except Exception:
-                    file_content = None
+                elif file_type == 'XDATCAR':
+                    xdatcar = XDATCAR(file_path)
+                    structures = xdatcar.structure
+                    file_content = []
+                    for structure in structures:
+                        structure.write_POSCAR(name="temp")
+                        with open("temp", "r") as f:
+                            file_content.append(f.read())
+                        os.system("rm -rf temp")
+
             return {"filePath": str(file_path.relative_to("./")), "fileContent": file_content,
                     "fileLineCount": file_line_count}
         except Exception as e:
@@ -138,11 +147,6 @@ def plot_band():
     for band_index in range(energy_avg.shape[1]):
         data_dict = {'name': f'B{band_index + 1}', 'data': [[x, y] for x, y in zip(kcoord, energy_avg[:, band_index])]}
         data.append({**default_style, **data_dict})
-
-    # data = {
-    #     "energy": energy_avg_list,
-    #     "kcoord": kcoord,
-    # }
 
     return {"series": data}
 

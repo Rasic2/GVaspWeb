@@ -1,4 +1,6 @@
-from gvasp.common.file import OUTCAR, LOCPOT
+import os
+
+from gvasp.common.file import OUTCAR, LOCPOT, XDATCAR
 from gvasp.common.plot import DOSData, PESData
 
 
@@ -30,5 +32,19 @@ def get_pes_data():
     pass
 
 
+def get_structures():
+    xdatcar = XDATCAR("XDATCAR")
+    structures = xdatcar.structure
+    contents = []
+    for structure in structures:
+        structure.write_POSCAR(name="temp")
+        with open("temp", "r") as f:
+            contents.append(f.read())
+        os.system("rm -rf temp")
+    pass
+
+
 if __name__ == '__main__':
-    get_pes_data()
+    # get_pes_data()
+    # get_opt_data()
+    get_structures()

@@ -4,7 +4,7 @@
     <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="auto" class="fileUpload" :size="formSize"
       status-icon label-position="left">
       <el-form-item v-for="(item, index) in ['CONTCAR', 'DOSCAR']" :key="index" :label="item" prop="name" required>
-        <file-upload :index="index" :limitNum="1" :type="4" :projectId="uploadItems[index].projectId"
+        <file-upload :index="index" :limitNum="1" :type="item" :projectId="uploadItems[index].projectId"
           :fileList="uploadItems[index].fileLists" @uploadSuccess="handleFileLists"
           @updateFile="updateFileLists"></file-upload>
       </el-form-item>

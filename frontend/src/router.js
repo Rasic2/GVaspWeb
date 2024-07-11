@@ -13,6 +13,10 @@ const routes = [
     //路由嵌套
     children: [
       {
+        path: "/index/vis_traj",
+        component: () => import("./components/VisTraj.vue"),
+      },
+      {
         path: "/index/plot_opt",
         component: () => import("./components/PlotOpt.vue"),
       },
