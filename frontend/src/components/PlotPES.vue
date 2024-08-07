@@ -179,10 +179,11 @@ const plot = () => {
   width: 600px;
   padding-bottom: 20px;
   padding-top: 1px;
-  -webkit-box-shadow: #666 0 0 10px;
-  -moz-box-shadow: #666 0 0 10px;
-  box-shadow: #666 0 0 10px;
-  background: #eeff99;
+  -webkit-box-shadow: #999 0 0 5px;
+  -moz-box-shadow: #999 0 0 5px;
+  box-shadow: #999 0 0 5px;
+  background: white;
+  border-radius: 10px;
   float: left;
 }
 </style>

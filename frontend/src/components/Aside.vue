@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-menu background-color="#545c64" text-color="#ffffff" active-text-color="#ffd04b" class="el-menu-vertical-demo"
+    <el-menu background-color="#F7FAFE" text-color="black" active-text-color="#5138FF" class="el-menu-vertical-demo"
       router>
       <el-menu-item index="/index/vis_traj">轨迹可视化</el-menu-item>
       <el-menu-item index="/index/plot_opt">结构优化</el-menu-item>
@@ -21,5 +21,26 @@ export default {
 <style scoped>
 .el-menu-vertical-demo {
   height: 100%;
+}
+
+.el-menu .el-menu-item {
+  width: 80%;
+  margin-left: 10%;
+}
+
+.el-menu .el-menu-item:hover {
+  background-color: #ECEEF8 !important;
+  color: black !important;
+  border-radius: 10px;
+  width: 80%;
+  margin-left: 10%;
+}
+
+.el-menu .el-menu-item.is-active {
+  background-color: #5138FF !important;
+  color: white !important;
+  border-radius: 10px;
+  width: 80%;
+  margin-left: 10%;
 }
 </style>
