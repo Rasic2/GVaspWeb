@@ -13,6 +13,10 @@ const routes = [
     //路由嵌套
     children: [
       {
+        path: "/index/create_input",
+        component: () => import("./components/CreateInput.vue"),
+      },
+      {
         path: "/index/vis_traj",
         component: () => import("./components/VisTraj.vue"),
       },

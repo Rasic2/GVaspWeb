@@ -1,10 +1,12 @@
 <template>
   <div class="checkboxPDOS">
-    <el-checkbox class="selectAll" v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">
+    <el-checkbox :class="['selectAll', customSelectAll]" v-model="checkAll" :indeterminate="isIndeterminate"
+      @change="handleCheckAllChange">
       {{ lOrbital }}
     </el-checkbox>
     <el-checkbox-group v-model="checkedOrbitals" @change="handleCheckedOrbitalsChange">
-      <el-checkbox class="selectSingle" v-for="orbital in orbitals" :key="orbital" :label="orbital" :value="orbital">
+      <el-checkbox :class="['selectSingle', customSelectSingle]" v-for="orbital in orbitals" :key="orbital"
+        :label="orbital" :value="orbital">
         {{ orbital.value }}
       </el-checkbox>
     </el-checkbox-group>
@@ -27,6 +29,14 @@ const props = defineProps({
   orbitals: {
     type: Array,
     default: () => [],
+  },
+  customSelectAll: {
+    type: String,
+    default: "",
+  },
+  customSelectSingle: {
+    type: String,
+    default: "",
   },
 });
 
@@ -51,8 +61,8 @@ const handleCheckedOrbitalsChange = (value) => {
   const checkedCount = value.length;
   checkAll.value = checkedCount === orbitals.length;
   isIndeterminate.value = checkedCount > 0 && checkedCount < orbitals.length;
-  // console.log(checkAll, isIndeterminate)
-  // console.log(checkedOrbitals.value);
+  let updateOrbitals = value.map((item) => item.value);
+  emits("updateOrbitals", "substitute", props.sIndex, updateOrbitals);
 };
 </script>
 

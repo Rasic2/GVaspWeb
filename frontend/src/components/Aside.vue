@@ -2,6 +2,7 @@
   <div>
     <el-menu background-color="#F7FAFE" text-color="black" active-text-color="#5138FF" class="el-menu-vertical-demo"
       router>
+      <el-menu-item index="/index/create_input">生成输入</el-menu-item>
       <el-menu-item index="/index/vis_traj">轨迹可视化</el-menu-item>
       <el-menu-item index="/index/plot_opt">结构优化</el-menu-item>
       <el-menu-item index="/index/plot_ep">静电势</el-menu-item>
