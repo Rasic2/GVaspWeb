@@ -8,19 +8,18 @@
         </div>
         <el-form-item v-for="(item, index) in ['任务类型']" :key="index" :label="item" class="horizontal-align" required>
             <el-radio-group v-model="radio" class="inputRadio">
-                <el-radio value="1" size="large">opt</el-radio>
-                <el-radio value="2" size="large">chg</el-radio>
-                <el-radio value="3" size="large">wf</el-radio>
-                <el-radio value="4" size="large">dos</el-radio>
-                <el-radio value="5" size="large">freq</el-radio>
-                <el-radio value="6" size="large">md</el-radio>
-                <el-radio value="7" size="large">stm</el-radio>
-                <el-radio value="8" size="large">ts</el-radio>
+                <el-radio value=1 size="large">opt</el-radio>
+                <el-radio value=2 size="large">chg</el-radio>
+                <el-radio value=3 size="large">wf</el-radio>
+                <el-radio value=4 size="large">dos</el-radio>
+                <el-radio value=5 size="large">freq</el-radio>
+                <el-radio value=6 size="large">md</el-radio>
+                <el-radio value=7 size="large">stm</el-radio>
+                <el-radio value=8 size="large">con-ts</el-radio>
             </el-radio-group>
         </el-form-item>
-        <div v-if="radio == 1" class="inputOptions">
-            <checkbox-pdos :sIndex="index" :l-orbital="'全选'"
-                :orbitals="['potential', 'vdw', 'sol', 'gamma', 'hse', 'static', 'nelect']"
+        <div v-if="radio >= 1" class="inputOptions">
+            <checkbox-pdos :sIndex="index" :l-orbital="'全选'" :orbitals="checkboxOptions"
                 customSelectAll="customSelectAll" customSelectSingle="customSelectSingle"
                 @updateOrbitals="handleUpdateOrbitals"></checkbox-pdos>
             <div v-if="options.indexOf('potential') !== -1">
@@ -62,6 +61,13 @@ const potentialOptions = ['PAW_LDA', 'PAW_PBE', 'PAW_PW91', 'USPP_LDA', 'USPP_PW
 const nelect = ref(0)
 
 // Computed
+const checkboxOptions = computed(() => {
+    const defaultOptions = ['potential', 'vdw', 'sol', 'gamma', 'hse', 'static', 'nelect']
+    if (radio.value == 1) {
+        return [...defaultOptions, 'low']
+    }
+    return [...defaultOptions]
+})
 
 const fileCount = computed(() => {
     return uploadItem.value.fileLists.length

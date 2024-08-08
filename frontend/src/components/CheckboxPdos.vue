@@ -5,9 +5,9 @@
       {{ lOrbital }}
     </el-checkbox>
     <el-checkbox-group v-model="checkedOrbitals" @change="handleCheckedOrbitalsChange">
-      <el-checkbox :class="['selectSingle', customSelectSingle]" v-for="orbital in orbitals" :key="orbital"
+      <el-checkbox :class="['selectSingle', customSelectSingle]" v-for="orbital in props.orbitals" :key="orbital"
         :label="orbital" :value="orbital">
-        {{ orbital.value }}
+        {{ orbital }}
       </el-checkbox>
     </el-checkbox-group>
   </div>
@@ -15,7 +15,7 @@
 
 <script setup>
 import { ref } from "vue";
-import { toRefs, defineProps, defineEmits } from "vue";
+import { defineProps, defineEmits } from "vue";
 
 const props = defineProps({
   sIndex: {
@@ -45,12 +45,12 @@ const emits = defineEmits(["updateOrbitals"]);
 const checkAll = ref(false);
 const isIndeterminate = ref(false);
 const checkedOrbitals = ref([]);
-const orbitals = toRefs(props.orbitals);
+// const orbitals = toRefs(props.orbitals);
 
 const handleCheckAllChange = (val) => {
-  checkedOrbitals.value = val ? orbitals : [];
+  checkedOrbitals.value = val ? props.orbitals : [];
   isIndeterminate.value = false;
-  let updateOrbitals = orbitals.map((item) => item.value);
+  let updateOrbitals = props.orbitals.map((item) => item);
   if (checkAll.value) {
     emits("updateOrbitals", "add", props.sIndex, updateOrbitals);
   } else {
@@ -59,9 +59,9 @@ const handleCheckAllChange = (val) => {
 };
 const handleCheckedOrbitalsChange = (value) => {
   const checkedCount = value.length;
-  checkAll.value = checkedCount === orbitals.length;
-  isIndeterminate.value = checkedCount > 0 && checkedCount < orbitals.length;
-  let updateOrbitals = value.map((item) => item.value);
+  checkAll.value = checkedCount === props.orbitals.length;
+  isIndeterminate.value = checkedCount > 0 && checkedCount < props.orbitals.length;
+  let updateOrbitals = value.map((item) => item);
   emits("updateOrbitals", "substitute", props.sIndex, updateOrbitals);
 };
 </script>
