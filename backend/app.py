@@ -4,10 +4,11 @@ import time
 from hashlib import md5
 from pathlib import Path
 
-from flask import Flask, request, send_from_directory
+from flask import Flask, request, send_from_directory, jsonify, send_file
 from flask_cors import cross_origin, CORS
 from gvasp.common.file import OUTCAR, LOCPOT, CONTCAR, EIGENVAL, XDATCAR
 from gvasp.common.plot import DOSData, PESData
+from gvasp.main import main
 
 app = Flask(__name__, static_folder="static")
 CORS(app)
@@ -103,6 +104,25 @@ def upload_file():
             return '文件上载过程中出错: {}'.format(str(e))
     else:
         return '请求方法不允许'
+
+
+@app.route('/api/generate_input', methods=['POST'])
+@cross_origin(origins="*")
+def generate_input():
+    os.system(f"rm -rf *.xsd KPOINTS POSCAR")
+    params = request.get_json()
+    print(params)
+    data = {}
+    os.system(f"cp {params['file']} .")
+    main(['submit', params['task']])
+
+    try:
+        # 假设文件存储在当前目录下
+        file_path = 'POSCAR'
+        # 返回文件
+        return send_file(file_path, as_attachment=True, download_name='POSCAR')
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route('/api/get_opt_data', methods=['POST'])

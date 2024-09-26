@@ -8,17 +8,17 @@
         </div>
         <el-form-item v-for="(item, index) in ['任务类型']" :key="index" :label="item" class="horizontal-align" required>
             <el-radio-group v-model="radio" class="inputRadio">
-                <el-radio value=1 size="large">opt</el-radio>
-                <el-radio value=2 size="large">chg</el-radio>
-                <el-radio value=3 size="large">wf</el-radio>
-                <el-radio value=4 size="large">dos</el-radio>
-                <el-radio value=5 size="large">freq</el-radio>
-                <el-radio value=6 size="large">md</el-radio>
-                <el-radio value=7 size="large">stm</el-radio>
-                <el-radio value=8 size="large">con-ts</el-radio>
+                <el-radio value='opt' size="large">opt</el-radio>
+                <el-radio value='chg' size="large">chg</el-radio>
+                <el-radio value='wf' size="large">wf</el-radio>
+                <el-radio value='dos' size="large">dos</el-radio>
+                <el-radio value='freq' size="large">freq</el-radio>
+                <el-radio value='md' size="large">md</el-radio>
+                <el-radio value='stm' size="large">stm</el-radio>
+                <el-radio value='con-ts' size="large">con-ts</el-radio>
             </el-radio-group>
         </el-form-item>
-        <div v-if="radio >= 1" class="inputOptions">
+        <div v-if="radio != ''" class="inputOptions">
             <checkbox-pdos :sIndex="index" :l-orbital="'全选'" :orbitals="checkboxOptions"
                 customSelectAll="customSelectAll" customSelectSingle="customSelectSingle"
                 @updateOrbitals="handleUpdateOrbitals"></checkbox-pdos>
@@ -47,6 +47,7 @@ export default {
 
 <script setup>
 import { ref, computed } from "vue";
+import axios from "axios";
 import CheckboxPdos from "@/components/CheckboxPdos.vue";
 import FileUpload from "@/components/upload.vue";
 
@@ -63,7 +64,7 @@ const nelect = ref(0)
 // Computed
 const checkboxOptions = computed(() => {
     const defaultOptions = ['potential', 'vdw', 'sol', 'gamma', 'hse', 'static', 'nelect']
-    if (radio.value == 1) {
+    if (radio.value == 'opt') {
         return [...defaultOptions, 'low']
     }
     return [...defaultOptions]
@@ -79,12 +80,55 @@ const generateDisabled = computed(() => {
         return true;
     }
 
+    if (radio.value == null) {
+        return true
+    }
+
     if (options.value.indexOf('potential') !== -1) {
         return potentialValue.value == "" || potentialValue.value == undefined
     }
 
     return false;
 })
+
+// Methods
+
+const generate = async () => {
+    var params = {
+        file: uploadItem.value.fileLists[0].filePath,
+        task: radio.value,
+        options: options.value,
+        potential: potentialValue.value,
+        nelect: nelect.value
+    }
+    console.log(params)
+    try {
+        const apiUrl = process.env.VUE_APP_API_URL || '';
+        const res = await axios.post(apiUrl + "/api/generate_input", params, {
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+            },
+            responseType: 'blob',
+        });
+        if (res.status == 200) {
+            // 创建一个链接元素
+            const url = window.URL.createObjectURL(new Blob([res.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            console.log(url)
+            link.setAttribute('download', 'POSCAR'); // 设置下载的文件名
+            document.body.appendChild(link);
+            link.click();
+
+            // 释放 URL 对象
+            window.URL.revokeObjectURL(url);
+            console.log(res.data)
+            /** @type EChartsOption */
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 /**
  * Handles the file list for a specific index.
